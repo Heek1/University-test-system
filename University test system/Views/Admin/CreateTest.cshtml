@@ -1,0 +1,42 @@
+﻿@model University_test_system.ViewModels.Tests.AddTestViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Створення тестів";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Створити тест</h2>
+
+<form asp-action="CreateTest" asp-controller="Admin" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="SubjectId" class="form-label"></label>
+        <select asp-for="SubjectId" class="form-control"
+                asp-items="@(new SelectList(Model.Subjects, "Id", "Name", Model.SubjectId))">
+            <option value="">-- Оберіть предмет --</option>
+        </select>
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Time" class="form-label"></label>
+        <input asp-for="Time" class="form-control" type="number" min="1" max="300" />
+        <span asp-validation-for="Time" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Створити</button>
+    <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary ms-2">Назад</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

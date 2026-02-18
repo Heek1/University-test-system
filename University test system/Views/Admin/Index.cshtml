@@ -1,0 +1,61 @@
+﻿@model IEnumerable<University_test_system.Models.Test>
+
+@{
+    ViewData["Title"] = "Тести";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Список тестів</h2>
+
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success" role="alert">@success</div>
+}
+
+<p>
+    <a asp-action="CreateTest" asp-controller="Admin" class="btn btn-primary">Створити тест</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Назва</th>
+            <th>Предмет</th>
+            <th>Час (хв)</th>
+            <th>Питань</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var index = 1;
+            foreach (var test in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@test.Title</td>
+                    <td>@(test.Subject?.Name ?? String.Empty)</td>
+                    <td>@test.Time</td>
+                    <td>@(test.Questions?.Count ?? 0)</td>
+                    <td>
+                        <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id" class="btn btn-sm btn-outline-secondary me-1">Редагувати</a>
+
+                        <form asp-action="DeleteTest" asp-controller="Admin" asp-route-id="@test.Id" method="post" class="d-inline" onsubmit="return confirm('Видалити цей тест?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
+                        </form>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">Тестів не знайдено</td>
+            </tr>
+        }
+    </tbody>
+</table>
