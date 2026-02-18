@@ -7,8 +7,8 @@ namespace University_test_system.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;  // керує користувачами
+    private readonly SignInManager<User> _signInManager;  // керує входом/виходом
     
     public AccountController(
         UserManager<User> userManager,
@@ -20,8 +20,8 @@ public class AccountController : Controller
     
     public IActionResult Register()
     {
-        if (User.Identity?.IsAuthenticated == true)
-            return RedirectToAction("Index", "Home");
+        if (User.Identity?.IsAuthenticated == true) // якщо вже залогінений
+            return RedirectToAction("Index", "Home"); 
             
         return View();
     }
@@ -40,15 +40,16 @@ public class AccountController : Controller
             RegisteredAt = DateTime.UtcNow
         };
         
-        var result = await _userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, model.Password);  //збереження в БД
         
         if (result.Succeeded)
         {
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _userManager.AddToRoleAsync(user, "User"); // призначає роль
+            await _signInManager.SignInAsync(user, isPersistent: false); // автоматичний вхід після реєстрації
             return RedirectToAction("Index", "Home");
         }
         
-        foreach (var error in result.Errors)
+        foreach (var error in result.Errors) // показує помилки біля поля
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
@@ -58,10 +59,8 @@ public class AccountController : Controller
     
     public IActionResult Login(string? returnUrl = null)
     {
-        if (User.Identity?.IsAuthenticated == true)
+        if (User.Identity?.IsAuthenticated == true) // якщо вже залогінений
             return RedirectToAction("Index", "Home");
-        
-        ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
     
@@ -69,8 +68,6 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
-        ViewData["ReturnUrl"] = returnUrl;
-        
         if (!ModelState.IsValid)
             return View(model);
         
@@ -81,11 +78,9 @@ public class AccountController : Controller
             lockoutOnFailure: false);
         
         if (result.Succeeded)
-        {
-            return LocalRedirect(returnUrl ?? "/");
-        }
-        
-        ModelState.AddModelError(string.Empty, "Невірний email або пароль");
+            return RedirectToAction("Index", "Home");
+    
+        ModelState.AddModelError(string.Empty, "Невірний email або пароль"); // помилка не біля визначеного поля, а загальна
         return View(model);
     }
     
