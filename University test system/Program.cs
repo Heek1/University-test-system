@@ -52,6 +52,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+app.Run();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -63,7 +64,5 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 }
-
-app.Run();
 
 app.Run();
