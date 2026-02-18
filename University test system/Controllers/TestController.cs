@@ -116,5 +116,19 @@ public class TestController : Controller
     
         return View(history);
     }
+
+    // Сторінка перегляду рейтингу студентів за певним тестом
+    public async Task<IActionResult> Leaderboard(int testId)
+    {        
+        // Отримуємо всі спроби, включаючи інформацію про користувачів та тести
+        var leaderboard = await _context.Attempts
+            .Include(a => a.User)
+            .Include(a => a.Test)
+            .Where(a => a.TestId == testId) // Фільтруємо за тестом
+            .OrderByDescending(a => a.Score) // Сортуємо за балами
+            .ThenBy(a => a.AttemptDate) // Якщо бали однакові, сортуємо за датою
+            .ToListAsync();
     
+        return View(leaderboard);
+    }
 }
