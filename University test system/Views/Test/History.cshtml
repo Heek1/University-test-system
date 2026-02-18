@@ -1,0 +1,37 @@
+@model IEnumerable<University_test_system.Models.Attempt>
+
+@{
+    ViewData["Title"] = "Історія проходження тестів";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Назва тесту</th>
+            <th>Предмет</th>
+            <th>Дата спроби</th>
+            <th>Номер спроби</th>
+            <th>Бали</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var attempt in Model)
+        {
+            <tr>
+                <td>@attempt.Test.Title</td>
+                <td>@attempt.Test.Subject?.Name</td>
+                <td>@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@attempt.Count</td>
+                <td>@attempt.Score</td>
+                <td>
+                    <a asp-action="Result" asp-route-id="@attempt.Id" class="btn btn-sm btn-info">
+                        Переглянути
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
