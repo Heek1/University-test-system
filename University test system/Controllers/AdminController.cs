@@ -17,7 +17,7 @@ public class AdminController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index() // отримує всі тести з бази і передає їх у вигляді списку
     {
         var tests = await _context.Tests
             .Include(t => t.Subject)
@@ -29,7 +29,7 @@ public class AdminController : Controller
     {
         var model = new AddTestViewModel
         {
-            Subjects = await _context.Subjects.ToListAsync()
+            Subjects = await _context.Subjects.ToListAsync() // отримує всі предмети з бази і передає їх у вигляді списку для вибору при створенні тесту
         };
         return View(model);
     }
@@ -40,7 +40,7 @@ public class AdminController : Controller
     {
         if (!ModelState.IsValid)
         {
-            model.Subjects = await _context.Subjects.ToListAsync();
+            model.Subjects = await _context.Subjects.ToListAsync(); // перезавантажує список предметів, якщо модель не валідна, щоб знову показати форму з помилками
             return View(model);
         }
 
@@ -51,11 +51,11 @@ public class AdminController : Controller
             Time = model.Time
         };
 
-        _context.Tests.Add(test);
-        await _context.SaveChangesAsync();
+        _context.Tests.Add(test); // додає новий тест
+        await _context.SaveChangesAsync(); // зберігає в БД
 
         TempData["Success"] = "Тест створено";
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index)); // відправляє на список тестів
     }
 
     public async Task<IActionResult> DeleteTest(int id)
