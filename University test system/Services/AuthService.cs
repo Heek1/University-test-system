@@ -1,5 +1,4 @@
-﻿// University test system\Services\AuthService.cs
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using University_test_system.Models;
 using University_test_system.ViewModels.Account;
 
