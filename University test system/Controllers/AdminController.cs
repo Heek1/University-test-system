@@ -69,4 +69,22 @@ public class AdminController : Controller
         TempData["Success"] = "Тест видалено";
         return RedirectToAction(nameof(Index));
     }
+
+    //Редагування тесту через Id тесту
+    public async Task<IActionResult> EditTest(int id)
+    {
+        //Знаходимо тест за Id
+        var test = await _context.Tests.FindAsync(id);
+        if (test == null) return NotFound();
+
+        //Створюємо модель для передачі даних у вигляд
+        var model = new AddTestViewModel
+        {
+            Title = test.Title,
+            SubjectId = test.SubjectId,
+            Time = test.Time,
+            Subjects = await _context.Subjects.ToListAsync()
+        };
+        return View(model);
+    }
 }
