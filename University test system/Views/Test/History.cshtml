@@ -6,7 +6,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<table class="table table-striped mt-3">
+<table class="knu-table">
     <thead>
         <tr>
             <th>Назва тесту</th>
@@ -27,7 +27,7 @@
                 <td>@attempt.Count</td>
                 <td>@attempt.Score</td>
                 <td>
-                    <a asp-action="Result" asp-route-id="@attempt.Id" class="btn btn-sm btn-info">
+                    <a asp-action="Result" asp-route-id="@attempt.Id" class="btn-knu">
                         Переглянути
                     </a>
                 </td>
