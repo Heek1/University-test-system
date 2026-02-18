@@ -10,6 +10,7 @@ namespace University_test_system.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
+    //Контролер для адміністрування тестів: створення, редагування, видалення
     private readonly ApplicationDbContext _context;
 
     public AdminController(ApplicationDbContext context)
@@ -17,33 +18,37 @@ public class AdminController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index() // отримує всі тести з бази і передає їх у вигляді списку
+    //Головна сторінка адміна - список тестів
+    public async Task<IActionResult> Index()
     {
         var tests = await _context.Tests
             .Include(t => t.Subject)
             .ToListAsync();
         return View(tests);
     }
-
+    
+    //Сторінка створення нового тесту
     public async Task<IActionResult> CreateTest()
     {
         var model = new AddTestViewModel
         {
-            Subjects = await _context.Subjects.ToListAsync() // отримує всі предмети з бази і передає їх у вигляді списку для вибору при створенні тесту
+            Subjects = await _context.Subjects.ToListAsync()
         };
         return View(model);
     }
 
+    //Обробка даних з форми створення тесту
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateTest(AddTestViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            model.Subjects = await _context.Subjects.ToListAsync(); // перезавантажує список предметів, якщо модель не валідна, щоб знову показати форму з помилками
+            model.Subjects = await _context.Subjects.ToListAsync();
             return View(model);
         }
 
+        //Створюємо новий тест на основі даних з форми
         var test = new Test
         {
             Title = model.Title,
@@ -51,13 +56,15 @@ public class AdminController : Controller
             Time = model.Time
         };
 
-        _context.Tests.Add(test); // додає новий тест
-        await _context.SaveChangesAsync(); // зберігає в БД
+        //Додаємо тест до бази даних
+        _context.Tests.Add(test);
+        await _context.SaveChangesAsync();
 
         TempData["Success"] = "Тест створено";
-        return RedirectToAction(nameof(Index)); // відправляє на список тестів
+        return RedirectToAction(nameof(Index));
     }
-
+    
+    //Сторінка видалення тесту
     public async Task<IActionResult> DeleteTest(int id)
     {
         var test = await _context.Tests.FindAsync(id);
