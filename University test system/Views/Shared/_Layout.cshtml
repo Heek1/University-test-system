@@ -1,50 +1,588 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - University_test_system</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/University_test_system.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] — КНУ Тестова Система</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --knu-crimson:   #C0122C;
+            --knu-crimson-d: #8B0A1E;
+            --knu-crimson-l: #E8364F;
+            --knu-gold:      #D4A843;
+            --knu-warm-bg:   #FDF6F0;
+            --knu-warm-card: #FFFFFF;
+            --knu-warm-muted:#F9EEE8;
+            --knu-text:      #2A1A1A;
+            --knu-text-muted:#7A5C5C;
+            --knu-border:    #E8D5CE;
+            --knu-shadow:    0 2px 20px rgba(192,18,44,.10);
+            --knu-shadow-lg: 0 8px 40px rgba(192,18,44,.15);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background-color: var(--knu-warm-bg);
+            color: var(--knu-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ─── NAVBAR ─── */
+        .knu-navbar {
+            background: linear-gradient(135deg, var(--knu-crimson-d) 0%, var(--knu-crimson) 60%, var(--knu-crimson-l) 100%);
+            box-shadow: 0 3px 16px rgba(0,0,0,.25);
+            padding: .75rem 0;
+        }
+
+        .knu-navbar .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: #fff !important;
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            line-height: 1.25;
+            text-decoration: none;
+        }
+
+        .knu-navbar .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,.15);
+            border: 2px solid rgba(255,255,255,.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            transition: background .2s;
+        }
+
+        .knu-navbar .brand-logo:hover { background: rgba(255,255,255,.25); }
+
+        .knu-navbar .brand-text span {
+            display: block;
+            font-size: .65rem;
+            font-family: 'Source Sans 3', sans-serif;
+            font-weight: 300;
+            opacity: .8;
+            letter-spacing: .05em;
+        }
+
+        .knu-navbar .nav-link {
+            color: rgba(255,255,255,.85) !important;
+            font-weight: 500;
+            font-size: .9rem;
+            padding: .4rem .75rem !important;
+            border-radius: 6px;
+            transition: background .2s, color .2s;
+        }
+
+        .knu-navbar .nav-link:hover,
+        .knu-navbar .nav-link.active {
+            color: #fff !important;
+            background: rgba(255,255,255,.18);
+        }
+
+        .knu-navbar .nav-link i { margin-right: .35rem; }
+
+        .knu-navbar .navbar-toggler {
+            border-color: rgba(255,255,255,.4);
+        }
+        .knu-navbar .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255%2C255%2C255%2C0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* User badge */
+        .knu-user-badge {
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            color: #fff;
+            border-radius: 20px;
+            padding: .3rem .85rem;
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        /* ─── BREADCRUMB AREA ─── */
+        .knu-breadcrumb-bar {
+            background: var(--knu-warm-muted);
+            border-bottom: 1px solid var(--knu-border);
+            padding: .5rem 0;
+        }
+
+        .breadcrumb {
+            margin: 0;
+            font-size: .82rem;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--knu-text-muted); }
+        .breadcrumb-item a { color: var(--knu-crimson); text-decoration: none; }
+        .breadcrumb-item a:hover { text-decoration: underline; }
+        .breadcrumb-item.active { color: var(--knu-text-muted); }
+
+        /* ─── MAIN ─── */
+        main { flex: 1; }
+
+        /* ─── PAGE HEADER ─── */
+        .knu-page-header {
+            background: linear-gradient(135deg, var(--knu-crimson-d), var(--knu-crimson));
+            color: #fff;
+            padding: 2.5rem 0 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .knu-page-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .knu-page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0;
+            position: relative;
+        }
+
+        .knu-page-header p {
+            opacity: .8;
+            margin: .4rem 0 0;
+            font-size: .95rem;
+            position: relative;
+        }
+
+        /* ─── CARDS ─── */
+        .knu-card {
+            background: var(--knu-warm-card);
+            border: 1px solid var(--knu-border);
+            border-radius: 12px;
+            box-shadow: var(--knu-shadow);
+            transition: box-shadow .25s, transform .25s;
+        }
+
+        .knu-card:hover {
+            box-shadow: var(--knu-shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .knu-card .card-header {
+            background: linear-gradient(135deg, var(--knu-crimson-d), var(--knu-crimson));
+            color: #fff;
+            border-radius: 11px 11px 0 0 !important;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            padding: 1rem 1.25rem;
+            border: none;
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn-knu {
+            background: linear-gradient(135deg, var(--knu-crimson-d), var(--knu-crimson));
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: .55rem 1.4rem;
+            transition: opacity .2s, transform .15s, box-shadow .2s;
+            box-shadow: 0 3px 12px rgba(192,18,44,.3);
+        }
+
+        .btn-knu:hover {
+            color: #fff;
+            opacity: .92;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 18px rgba(192,18,44,.4);
+        }
+
+        .btn-knu:active { transform: translateY(0); }
+
+        .btn-knu-outline {
+            background: transparent;
+            color: var(--knu-crimson);
+            border: 2px solid var(--knu-crimson);
+            border-radius: 8px;
+            font-weight: 600;
+            padding: .5rem 1.35rem;
+            transition: all .2s;
+        }
+
+        .btn-knu-outline:hover {
+            background: var(--knu-crimson);
+            color: #fff;
+        }
+
+        .btn-knu-gold {
+            background: linear-gradient(135deg, #B8860B, var(--knu-gold));
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: .55rem 1.4rem;
+            transition: opacity .2s, transform .15s;
+        }
+
+        .btn-knu-gold:hover { color: #fff; opacity: .9; transform: translateY(-1px); }
+
+        /* ─── TABLES ─── */
+        .knu-table {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--knu-shadow);
+        }
+
+        .knu-table thead th {
+            background: var(--knu-crimson);
+            color: #fff;
+            font-weight: 600;
+            font-size: .85rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            border: none;
+            padding: .85rem 1rem;
+        }
+
+        .knu-table tbody tr {
+            border-bottom: 1px solid var(--knu-border);
+            transition: background .15s;
+        }
+
+        .knu-table tbody tr:hover { background: var(--knu-warm-muted); }
+        .knu-table tbody td { padding: .8rem 1rem; vertical-align: middle; }
+
+        /* ─── ALERTS ─── */
+        .alert-knu-success {
+            background: #FFF5F0;
+            border-left: 4px solid #22c55e;
+            border-top: none; border-right: none; border-bottom: none;
+            border-radius: 8px;
+            color: var(--knu-text);
+        }
+
+        .alert-knu-danger {
+            background: #FFF0F0;
+            border-left: 4px solid var(--knu-crimson);
+            border-top: none; border-right: none; border-bottom: none;
+            border-radius: 8px;
+            color: var(--knu-text);
+        }
+
+        /* ─── FORM CONTROLS ─── */
+        .form-control:focus, .form-select:focus {
+            border-color: var(--knu-crimson);
+            box-shadow: 0 0 0 .2rem rgba(192,18,44,.15);
+        }
+
+        .form-label { font-weight: 500; font-size: .9rem; }
+
+        /* ─── BADGES ─── */
+        .badge-knu { background: var(--knu-crimson); }
+        .badge-knu-gold { background: var(--knu-gold); color: #fff; }
+        .badge-knu-soft {
+            background: var(--knu-warm-muted);
+            color: var(--knu-crimson);
+            border: 1px solid var(--knu-border);
+        }
+
+        /* ─── PROGRESS ─── */
+        .progress-knu .progress-bar {
+            background: linear-gradient(90deg, var(--knu-crimson-d), var(--knu-crimson-l));
+        }
+
+        /* ─── SIDEBAR (Admin) ─── */
+        .knu-sidebar {
+            background: #fff;
+            border-right: 1px solid var(--knu-border);
+            min-height: calc(100vh - 70px);
+            padding: 1.5rem 0;
+        }
+
+        .knu-sidebar .sidebar-heading {
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--knu-text-muted);
+            padding: .5rem 1.25rem .3rem;
+            font-weight: 600;
+        }
+
+        .knu-sidebar .nav-link {
+            color: var(--knu-text);
+            padding: .55rem 1.25rem;
+            border-radius: 0;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            transition: background .15s, color .15s, border-left .15s;
+            border-left: 3px solid transparent;
+        }
+
+        .knu-sidebar .nav-link:hover {
+            background: var(--knu-warm-muted);
+            color: var(--knu-crimson);
+        }
+
+        .knu-sidebar .nav-link.active {
+            background: var(--knu-warm-muted);
+            color: var(--knu-crimson);
+            border-left-color: var(--knu-crimson);
+            font-weight: 600;
+        }
+
+        .knu-sidebar .nav-link i { width: 18px; text-align: center; font-size: 1rem; }
+
+        /* ─── STAT CARDS ─── */
+        .knu-stat-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--knu-border);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--knu-shadow);
+        }
+
+        .knu-stat-card .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--knu-crimson-d), var(--knu-crimson));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .knu-stat-card .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            line-height: 1;
+            color: var(--knu-crimson);
+        }
+
+        .knu-stat-card .stat-label {
+            font-size: .8rem;
+            color: var(--knu-text-muted);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        /* ─── FOOTER ─── */
+        .knu-footer {
+            background: var(--knu-crimson-d);
+            color: rgba(255,255,255,.65);
+            padding: 1.25rem 0;
+            font-size: .8rem;
+            margin-top: auto;
+        }
+
+        .knu-footer a { color: rgba(255,255,255,.8); text-decoration: none; }
+        .knu-footer a:hover { color: #fff; }
+
+        /* ─── MISC UTILS ─── */
+        .text-knu   { color: var(--knu-crimson) !important; }
+        .text-gold  { color: var(--knu-gold) !important; }
+        .bg-knu     { background: var(--knu-crimson) !important; }
+        .divider-knu { border-color: var(--knu-border); }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--knu-text);
+            position: relative;
+            padding-bottom: .6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 48px;
+            height: 3px;
+            background: var(--knu-crimson);
+            border-radius: 2px;
+        }
+
+        /* Animations */
+        @@keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-up { animation: fadeInUp .4s ease forwards; }
+    </style>
+
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">University_test_system</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - University_test_system - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar navbar-expand-lg knu-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <div class="brand-logo">🎓</div>
+            <div class="brand-text">
+                КНУ ім. Шевченка
+                <span>Система тестування</span>
+            </div>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto ms-3">
+                @* Для звичайного користувача *@
+                @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Test" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           href="/Test/Index">
+                            <i class="bi bi-journal-text"></i>Предмети та тести
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "History" ? "active" : "")"
+                           href="/Test/History">
+                            <i class="bi bi-clock-history"></i>Моя Історія
+                        </a>
+                    </li>
+                }
+
+                @* Для адміна *@
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           href="/Admin/Index">
+                            <i class="bi bi-speedometer2"></i>Панель адміна
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "ViewAllUsers" ? "active" : "")"
+                           href="/Admin/ViewAllUsers">
+                            <i class="bi bi-people-fill"></i>Користувачі
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <div class="d-flex align-items-center gap-2">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="knu-user-badge">
+                        <i class="bi bi-person-circle"></i>
+                        <span>@User.Identity.Name</span>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <span class="badge bg-warning text-dark ms-1" style="font-size:.65rem">ADMIN</span>
+                        }
+                    </div>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+                        <button type="submit" class="btn btn-sm btn-knu-outline" style="--bs-btn-padding-y:.28rem;color:#fff;border-color:rgba(255,255,255,.5)">
+                            <i class="bi bi-box-arrow-right"></i> Вийти
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-sm btn-knu-outline" style="color:#fff;border-color:rgba(255,255,255,.5)">
+                        <i class="bi bi-box-arrow-in-right"></i> Увійти
+                    </a>
+                    <a href="/Account/Register" class="btn btn-sm btn-knu" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4)">
+                        <i class="bi bi-person-plus"></i> Реєстрація
+                    </a>
+                }
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    </div>
+</nav>
+
+<!-- ═══ BREADCRUMB ═══ -->
+@if (ViewData["Breadcrumb"] != null)
+{
+    <div class="knu-breadcrumb-bar">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    @Html.Raw(ViewData["Breadcrumb"])
+                </ol>
+            </nav>
+        </div>
+    </div>
+}
+
+<!-- ═══ ALERTS (TempData) ═══ -->
+@if (TempData["Success"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-knu-success alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <span>@TempData["Success"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-knu-danger alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-knu fs-5"></i>
+            <span>@TempData["Error"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main>
+    @RenderBody()
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="knu-footer">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+        <div>
+            <strong style="color:#fff">КНУ ім. Тараса Шевченка</strong> — Система тестування знань
+        </div>
+        <div>
+            <a href="https://knu.ua" target="_blank">knu.ua</a>
+            <span class="mx-2">·</span>
+            <span>© @DateTime.Now.Year</span>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+@RenderSection("Scripts", required: false)
 </body>
 </html>
