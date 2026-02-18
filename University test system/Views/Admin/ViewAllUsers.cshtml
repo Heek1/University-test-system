@@ -1,0 +1,76 @@
+﻿@model List<University_test_system.Models.User>
+
+@{
+    ViewData["Title"] = "Користувачі";
+    ViewData["Breadcrumb"] = @"
+        <li class='breadcrumb-item'><a href='/Admin/Index'>Адмін</a></li>
+        <li class='breadcrumb-item active'>Користувачі</li>";
+}
+
+<div class="knu-page-header">
+    <div class="container">
+        <h1><i class="bi bi-people-fill me-2"></i>Користувачі</h1>
+        <p>Список зареєстрованих студентів системи</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="knu-stat-card">
+                <div class="stat-icon"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="stat-value">@Model.Count</div>
+                    <div class="stat-label">Всього користувачів</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="knu-table">
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Email</th>
+                    <th>Ім'я користувача</th>
+                    <th>Дата реєстрації</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            Користувачів поки немає
+                        </td>
+                    </tr>
+                }
+                @foreach (var (user, i) in Model.Select((u, i) => (u, i + 1)))
+                {
+                    <tr>
+                        <td class="text-muted">@i</td>
+                        <td>
+                            <i class="bi bi-envelope me-1 text-knu"></i>@user.Email
+                        </td>
+                        <td>@user.UserName</td>
+                        <td>@user.RegisteredAt.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            <form asp-action="DeleteUser" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Видалити користувача @user.Email?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
