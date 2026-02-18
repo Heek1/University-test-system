@@ -2,19 +2,20 @@
 using Microsoft.AspNetCore.Identity;
 using University_test_system.Models;
 using University_test_system.ViewModels.Account;
+using University_test_system.Services;
 
 namespace University_test_system.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly UserManager<User> _userManager;  // керує користувачами
+    private readonly IAuthService _authService;
     private readonly SignInManager<User> _signInManager;  // керує входом/виходом
-    
+
     public AccountController(
-        UserManager<User> userManager,
+        IAuthService authService,
         SignInManager<User> signInManager)
     {
-        _userManager = userManager;
+        _authService = authService;
         _signInManager = signInManager;
     }
 
@@ -22,8 +23,8 @@ public class AccountController : Controller
     public IActionResult Register()
     {
         if (User.Identity?.IsAuthenticated == true) // якщо вже залогінений
-            return RedirectToAction("Index", "Home"); 
-            
+            return RedirectToAction("Index", "Home");
+
         return View();
     }
 
@@ -35,30 +36,14 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        // Створюємо нового користувача на основі даних з форми
-        var user = new User
-        {
-            UserName = model.Email,
-            Email = model.Email,
-            RegisteredAt = DateTime.UtcNow
-        };
-        
-        var result = await _userManager.CreateAsync(user, model.Password);  //збереження в БД
+        var result = await _authService.RegisterAsync(model);
 
-        // Якщо створення користувача успішне, призначаємо йому роль "User" та виконуємо вхід
         if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(user, "User"); // призначає роль
-            await _signInManager.SignInAsync(user, isPersistent: false); // автоматичний вхід після реєстрації
             return RedirectToAction("Index", "Home");
-        }
 
-        // Якщо виникли помилки при створенні користувача, додаємо їх до ModelState для відображення на сторінці
-        foreach (var error in result.Errors) // показує помилки біля поля
-        {
+        foreach (var error in result.Errors)
             ModelState.AddModelError(string.Empty, error.Description);
-        }
-        
+
         return View(model);
     }
 
@@ -69,7 +54,7 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         return View();
     }
-    
+
     // Обробка даних з форми входу
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -78,20 +63,19 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        // Виконуємо спробу входу користувача з вказаними даними
         var result = await _signInManager.PasswordSignInAsync(
-            model.Email, 
-            model.Password, 
-            model.RememberMe, 
+            model.Email,
+            model.Password,
+            model.RememberMe,
             lockoutOnFailure: false);
-        
+
         if (result.Succeeded)
             return RedirectToAction("Index", "Home");
-    
-        ModelState.AddModelError(string.Empty, "Невірний email або пароль"); // помилка не біля визначеного поля, а загальна
+
+        ModelState.AddModelError(string.Empty, "Невірний email або пароль");
         return View(model);
     }
-    
+
     // Обробка виходу користувача
     [HttpPost]
     [ValidateAntiForgeryToken]
