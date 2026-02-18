@@ -10,6 +10,7 @@ namespace University_test_system.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
+    //Контролер для адміністрування тестів: створення, редагування, видалення
     private readonly ApplicationDbContext _context;
 
     public AdminController(ApplicationDbContext context)
@@ -17,6 +18,7 @@ public class AdminController : Controller
         _context = context;
     }
 
+    //Головна сторінка адміна - список тестів
     public async Task<IActionResult> Index()
     {
         var tests = await _context.Tests
@@ -24,7 +26,8 @@ public class AdminController : Controller
             .ToListAsync();
         return View(tests);
     }
-
+    
+    //Сторінка створення нового тесту
     public async Task<IActionResult> CreateTest()
     {
         var model = new AddTestViewModel
@@ -34,6 +37,7 @@ public class AdminController : Controller
         return View(model);
     }
 
+    //Обробка даних з форми створення тесту
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateTest(AddTestViewModel model)
@@ -44,6 +48,7 @@ public class AdminController : Controller
             return View(model);
         }
 
+        //Створюємо новий тест на основі даних з форми
         var test = new Test
         {
             Title = model.Title,
@@ -51,13 +56,15 @@ public class AdminController : Controller
             Time = model.Time
         };
 
+        //Додаємо тест до бази даних
         _context.Tests.Add(test);
         await _context.SaveChangesAsync();
 
         TempData["Success"] = "Тест створено";
         return RedirectToAction(nameof(Index));
     }
-
+    
+    //Сторінка видалення тесту
     public async Task<IActionResult> DeleteTest(int id)
     {
         var test = await _context.Tests.FindAsync(id);

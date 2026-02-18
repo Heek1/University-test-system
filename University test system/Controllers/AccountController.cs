@@ -17,7 +17,8 @@ public class AccountController : Controller
         _userManager = userManager;
         _signInManager = signInManager;
     }
-    
+
+    // Сторінка реєстрації
     public IActionResult Register()
     {
         if (User.Identity?.IsAuthenticated == true) // якщо вже залогінений
@@ -25,14 +26,16 @@ public class AccountController : Controller
             
         return View();
     }
-    
+
+    // Обробка даних з форми реєстрації
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
-        
+
+        // Створюємо нового користувача на основі даних з форми
         var user = new User
         {
             UserName = model.Email,
@@ -41,14 +44,16 @@ public class AccountController : Controller
         };
         
         var result = await _userManager.CreateAsync(user, model.Password);  //збереження в БД
-        
+
+        // Якщо створення користувача успішне, призначаємо йому роль "User" та виконуємо вхід
         if (result.Succeeded)
         {
             await _userManager.AddToRoleAsync(user, "User"); // призначає роль
             await _signInManager.SignInAsync(user, isPersistent: false); // автоматичний вхід після реєстрації
             return RedirectToAction("Index", "Home");
         }
-        
+
+        // Якщо виникли помилки при створенні користувача, додаємо їх до ModelState для відображення на сторінці
         foreach (var error in result.Errors) // показує помилки біля поля
         {
             ModelState.AddModelError(string.Empty, error.Description);
@@ -56,7 +61,8 @@ public class AccountController : Controller
         
         return View(model);
     }
-    
+
+    // Сторінка входу
     public IActionResult Login(string? returnUrl = null)
     {
         if (User.Identity?.IsAuthenticated == true) // якщо вже залогінений
@@ -64,13 +70,15 @@ public class AccountController : Controller
         return View();
     }
     
+    // Обробка даних з форми входу
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
             return View(model);
-        
+
+        // Виконуємо спробу входу користувача з вказаними даними
         var result = await _signInManager.PasswordSignInAsync(
             model.Email, 
             model.Password, 
@@ -84,6 +92,7 @@ public class AccountController : Controller
         return View(model);
     }
     
+    // Обробка виходу користувача
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
