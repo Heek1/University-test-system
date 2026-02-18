@@ -10,6 +10,7 @@ namespace University_test_system.Controllers;
 [Authorize]
 public class TestController : Controller
 {
+    //Контролер для проходження тестів студентами та перегляду результатів
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
     
@@ -24,14 +25,16 @@ public class TestController : Controller
         var tests = await _context.Tests.ToListAsync();
         return View(tests);
     }
-    
+
+    // Сторінка проходження тесту
     public async Task<IActionResult> Take(int id)
     {
         var test = await _context.Tests.FindAsync(id);
         if (test == null) return NotFound();
         
         var userId = _userManager.GetUserId(User);
-        
+
+        // Перевіряємо, чи користувач вже проходив цей тест
         var alreadyTaken = await _context.Attempts
             .AnyAsync(ut => ut.UserId == userId && ut.TestId == id);
         
@@ -43,7 +46,8 @@ public class TestController : Controller
         
         return View(test);
     }
-    
+
+    // Обробка результатів тесту
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Take(int id, int score)
@@ -52,10 +56,12 @@ public class TestController : Controller
         if (test == null) return NotFound();
     
         var userId = _userManager.GetUserId(User);
-    
+
+        // Перевіряємо, чи користувач вже проходив цей тест
         var existing = await _context.Attempts
             .FirstOrDefaultAsync(a => a.UserId == userId && a.TestId == id);
-    
+
+        // Якщо вже є спроба, оновлюємо її
         if (existing != null)
         {
             existing.Count++;
@@ -64,7 +70,8 @@ public class TestController : Controller
             await _context.SaveChangesAsync();
             return RedirectToAction("Result", new { id = existing.Id });
         }
-    
+
+        // Створюємо нову спробу
         var attempt = new Attempt
         {
             UserId = userId,
@@ -73,16 +80,19 @@ public class TestController : Controller
             Score = score,
             AttemptDate = DateTime.UtcNow
         };
-    
+
+        // Додаємо спробу до бази даних
         _context.Attempts.Add(attempt);
         await _context.SaveChangesAsync();
     
         TempData["Success"] = "Тест завершено";
         return RedirectToAction("Result", new { id = attempt.Id });
     }
-    
+
+    // Сторінка результатів тесту
     public async Task<IActionResult> Result(int id)
     {
+        // Отримуємо спробу за її ID, включаючи інформацію про тест
         var userTest = await _context.Attempts
             .Include(ut => ut.Test)
             .FirstOrDefaultAsync(ut => ut.Id == id);
@@ -91,11 +101,13 @@ public class TestController : Controller
     
         return View(userTest);
     }
-    
+
+    // Сторінка історії проходження тестів користувача
     public async Task<IActionResult> History()
     {
         var userId = _userManager.GetUserId(User);
-    
+
+        // Отримуємо всі спроби користувача, включаючи інформацію про тести, відсортовані за датою
         var history = await _context.Attempts
             .Include(a => a.Test)
             .Where(a => a.UserId == userId)
