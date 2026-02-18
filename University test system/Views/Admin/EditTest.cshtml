@@ -1,0 +1,66 @@
+﻿@model University_test_system.ViewModels.Tests.AddTestViewModel
+
+@{
+    ViewData["Title"] = "Редагувати тест";
+    ViewData["Breadcrumb"] = @"
+        <li class='breadcrumb-item'><a href='/Admin/Index'>Адмін</a></li>
+        <li class='breadcrumb-item active'>Редагувати тест</li>";
+}
+
+<div class="knu-page-header">
+    <div class="container">
+        <h1><i class="bi bi-pencil-square me-2"></i>Редагувати тест</h1>
+        <p>Змініть дані тесту та збережіть</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="knu-card">
+                <div class="card-header">
+                    <i class="bi bi-journal-text me-2"></i>Дані тесту
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="EditTest" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Назва тесту</label>
+                            <input asp-for="Title" class="form-control" placeholder="Введіть назву тесту" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SubjectId" class="form-label">Предмет</label>
+                            <select asp-for="SubjectId" class="form-select"
+                                    asp-items="@(new SelectList(Model.Subjects, "Id", "Name"))">
+                                <option value="">-- Оберіть предмет --</option>
+                            </select>
+                            <span asp-validation-for="SubjectId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Time" class="form-label">Час (хвилини)</label>
+                            <input asp-for="Time" class="form-control" type="number" placeholder="Наприклад: 30" />
+                            <span asp-validation-for="Time" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-knu">
+                                <i class="bi bi-check-lg me-1"></i>Зберегти
+                            </button>
+                            <a asp-action="Index" class="btn btn-knu-outline">
+                                <i class="bi bi-x-lg me-1"></i>Скасувати
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
