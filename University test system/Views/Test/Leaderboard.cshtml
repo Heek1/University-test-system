@@ -1,0 +1,44 @@
+﻿@model IEnumerable<University_test_system.Models.Attempt>
+
+@{
+    ViewData["Title"] = "Лідерборд";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="knu-table">
+    <thead>
+        <tr>
+            <th>Місце</th>
+            <th>Користувач</th>
+            <th>Назва тесту</th>
+            <th>Предмет</th>
+            <th>Дата спроби</th>
+            <th>Бали</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            var rank = 1;
+            foreach (var attempt in Model)
+            {
+                <tr>
+                    <td>@rank</td>
+                    <td>@attempt.User.UserName</td>
+                    <td>@attempt.Test.Title</td>
+                    <td>@attempt.Test.Subject?.Name</td>
+                    <td>@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@attempt.Score</td>
+                </tr>
+                rank++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">Немає спроб для цього тесту.</td>
+            </tr>
+        }
+    </tbody>
+</table>
