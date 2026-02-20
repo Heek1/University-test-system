@@ -9,14 +9,10 @@ namespace University_test_system.Controllers;
 public class AccountController : Controller
 {
     private readonly IAuthService _authService;
-    private readonly SignInManager<User> _signInManager;  // керує входом/виходом
 
-    public AccountController(
-        IAuthService authService,
-        SignInManager<User> signInManager)
+    public AccountController(IAuthService authService)
     {
         _authService = authService;
-        _signInManager = signInManager;
     }
 
     // Сторінка реєстрації
@@ -63,16 +59,17 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = await _signInManager.PasswordSignInAsync(
-            model.Email,
-            model.Password,
-            model.RememberMe,
-            lockoutOnFailure: false);
+        var result = await _authService.LoginAsync(model);
 
         if (result.Succeeded)
-            return RedirectToAction("Index", "Home");
+        {
+            if (!string.IsNullOrEmpty(returnUrl))
+                return LocalRedirect(returnUrl);
 
-        ModelState.AddModelError(string.Empty, "Невірний email або пароль");
+            return RedirectToAction("Index", "Home");
+        }
+
+        ModelState.AddModelError(string.Empty, "Невірний логін або пароль");
         return View(model);
     }
 
@@ -81,7 +78,7 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        await _authService.LogoutAsync();
         return RedirectToAction("Index", "Home");
     }
 }

@@ -470,19 +470,19 @@ main {
     margin-bottom: 1.5rem;
 }
 
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 48px;
-        height: 3px;
-        background: var(--knu-crimson);
-        border-radius: 2px;
-    }
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 48px;
+    height: 3px;
+    background: var(--knu-crimson);
+    border-radius: 2px;
+}
 
 /* Animations */
-@@keyframes fadeInUp {
+@keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(16px);

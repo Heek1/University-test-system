@@ -7,4 +7,6 @@ namespace University_test_system.Services;
 public interface IAuthService
 {
     Task<IdentityResult> RegisterAsync(RegisterViewModel model);
+    Task<SignInResult> LoginAsync(LoginViewModel model);
+    Task LogoutAsync();
 }

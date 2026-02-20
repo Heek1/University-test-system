@@ -46,4 +46,32 @@ public class AuthService : IAuthService
 
         return IdentityResult.Success;
     }
+    
+    public async Task<SignInResult> LoginAsync(LoginViewModel model)
+    {
+        if (model is null) throw new ArgumentNullException(nameof(model));
+
+        // 1. шукаємо користувача по email
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        // 2. якщо не знайшли — це username
+        if (user == null)
+            user = await _userManager.FindByNameAsync(model.Email);
+
+        // 3. якщо взагалі не існує
+        if (user == null)
+            return SignInResult.Failed;
+
+        // 4. вхід
+        return await _signInManager.PasswordSignInAsync(
+            user.UserName,
+            model.Password,
+            model.RememberMe,
+            lockoutOnFailure: false);
+    }
+    
+    public async Task LogoutAsync()
+    {
+        await _signInManager.SignOutAsync();
+    }
 }

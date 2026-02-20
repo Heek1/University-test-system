@@ -9,6 +9,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//// Додаємо DbContext з retry policy
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(
+//        builder.Configuration.GetConnectionString("DefaultConnection"),
+//        sqlOptions => sqlOptions.EnableRetryOnFailure(
+//            maxRetryCount: 5,
+//            maxRetryDelay: TimeSpan.FromSeconds(10),
+//            errorNumbersToAdd: null
+//        )
+//    )
+//);
+
+
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -56,16 +69,49 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-app.Run();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var services = scope.ServiceProvider;
 
-    foreach (var role in new[] { "Admin", "User" })
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<User>>();
+
+    string[] roles = { "Admin", "User" };
+
+    // Створюємо ролі
+    foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
+    }
+
+    // Створюємо адміна
+    string adminEmail = "admin@knu.ua";
+    string adminPassword = "admin1234";
+
+    var admin = await userManager.FindByEmailAsync(adminEmail);
+    if (admin == null)
+    {
+        admin = new User
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true,
+            RegisteredAt = DateTime.UtcNow
+        };
+
+        await userManager.CreateAsync(admin, adminPassword);
+        await userManager.AddToRoleAsync(admin, "Admin");
+    }
+    else
+    {
+        admin.RegisteredAt = DateTime.Parse("2026-02-17");
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(admin);
+        await userManager.ResetPasswordAsync(admin, token, adminPassword);
+
+        await userManager.UpdateAsync(admin);
     }
 }
 
