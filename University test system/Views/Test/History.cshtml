@@ -3,10 +3,12 @@
 @{
     ViewData["Title"] = "Історія проходження тестів";
 }
+<div class="container text-center">
+    <h2 class="knu-page-header h1">@ViewData["Title"]</h2>
+</div>
 
-<h2>@ViewData["Title"]</h2>
-
-<table class="knu-table">
+<div class="min-vh-50 d-flex align-items-center justify-content-center py-5">
+    <table class="knu-table thead th">
     <thead>
         <tr>
             <th>Назва тесту</th>
@@ -17,7 +19,7 @@
             <th>Дії</th>
         </tr>
     </thead>
-    <tbody>
+        <tbody class="knu-table tbody tr">
         @foreach (var attempt in Model)
         {
             <tr>
@@ -33,5 +35,6 @@
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

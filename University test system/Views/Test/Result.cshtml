@@ -4,15 +4,17 @@
     ViewData["Title"] = "Результат тесту";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container text-center">
+    <h2 class="knu-page-header h1">@ViewData["Title"]</h2>
+</div>
 
-<div class="card mt-3">
+<div class="knu-card">
     <div class="card-header">
         <h4>@Model.Test.Title</h4>
         <p><strong>Предмет:</strong> @Model.Test.Subject?.Name</p>
         <p><strong>Час на виконання:</strong> @Model.Test.Time хв.</p>
     </div>
-    <div class="card-body">
+    <div class="card-header">
         <p><strong>Користувач:</strong> @Model.User?.UserName (@Model.UserId)</p>
         <p><strong>Email:</strong> @Model.User?.Email</p>
         <p><strong>Дата спроби:</strong> @Model.AttemptDate.ToString("dd.MM.yyyy HH:mm")</p>

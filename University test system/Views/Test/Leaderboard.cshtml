@@ -4,9 +4,12 @@
     ViewData["Title"] = "Лідерборд";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container text-center">
+    <h2 class="knu-page-header h1">@ViewData["Title"]</h2>
+</div>
 
-<table class="knu-table">
+<div class="min-vh-50 d-flex align-items-center justify-content-center py-5">
+    <table class="knu-table thead th">
     <thead>
         <tr>
             <th>Місце</th>
@@ -17,7 +20,7 @@
             <th>Бали</th>
         </tr>
     </thead>
-    <tbody>
+        <tbody class="knu-table tbody tr">
         @if (Model != null && Model.Any())
         {
             var rank = 1;
@@ -40,5 +43,6 @@
                 <td colspan="6">Немає спроб для цього тесту.</td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
