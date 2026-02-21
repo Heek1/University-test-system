@@ -1,8 +1,128 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Головна";
 }
+<div class="min-vh-50 d-flex align-items-center justify-content-center py-5"
+     style="background: linear-gradient(135deg,#8B0A1E 0%,#C0122C 50%,#E8364F 100%);">
+    <div class="container text-center" style="max-width:800px">
+        <h1 style="font-family:'Playfair Display',serif; color:#fff; font-size:2.5rem; margin-bottom:1rem;">
+            Система тестування знань
+        </h1>
+        <p style="color:rgba(255,255,255,.9); font-size:1.2rem; margin-bottom:2rem;">
+            Київський національний університет імені Тараса Шевченка
+        </p>
+        
+        @if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="/Account/Login" class="btn btn-knu px-4 py-2 fs-5">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Увійти
+                </a>
+                <a href="/Account/Register" class="btn btn-outline-light px-4 py-2 fs-5">
+                    <i class="bi bi-person-plus me-2"></i>Реєстрація
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex gap-3 justify-content-center">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a href="/Admin/Index" class="btn btn-knu px-4 py-2 fs-5">
+                        <i class="bi bi-speedometer2 me-2"></i>Панель адміна
+                    </a>
+                }
+                else
+                {
+                    <a href="/Test/Index" class="btn btn-knu px-4 py-2 fs-5">
+                        <i class="bi bi-journal-text me-2"></i>Доступні тести
+                    </a>
+                }
+                <a href="/Test/History" class="btn btn-outline-light px-4 py-2 fs-5">
+                    <i class="bi bi-clock-history me-2"></i>Моя історія
+                </a>
+            </div>
+        }
+    </div>
+</div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container my-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="knu-card text-center h-100 p-4">
+                <div class="display-1 text-knu mb-3">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+                <h4>Зручне тестування</h4>
+                <p class="text-muted mb-0">
+                    Проходьте тести онлайн з будь-якого пристрою. Миттєві результати.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="knu-card text-center h-100 p-4">
+                <div class="display-1 text-knu mb-3">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <h4>Статистика та рейтинги</h4>
+                <p class="text-muted mb-0">
+                    Відстежуйте прогрес та порівнюйте результати з іншими.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="knu-card text-center h-100 p-4">
+                <div class="display-1 text-knu mb-3">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h4>Історія спроб</h4>
+                <p class="text-muted mb-0">
+                    Переглядайте всі свої попередні результати в історії.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Інформаційний блок -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="knu-card p-4 text-center" style="background: linear-gradient(135deg,#8B0A1E 0%,#C0122C 50%,#E8364F 100%); color:white;">
+                <i class="bi bi-university" style="font-size: 5rem;"></i>
+                <h3 class="mt-3">КНУ ім. Тараса Шевченка</h3>
+                <p>Заснований у 1834 році</p>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h5 class="section-title mb-4">Про систему</h5>
+            <p style="font-size: 1.1rem; color: #333;">
+                Система тестування знань створена для перевірки та оцінювання знань студентів 
+                з різних предметів. Зручний інтерфейс, контроль часу та лідерборди роблять 
+                процес навчання цікавішим.
+            </p>
+            <div class="mt-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-check-circle-fill text-knu fs-4 me-3"></i>
+                    <span>Математика, фізика, інформатика, хімія</span>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-clock-fill text-knu fs-4 me-3"></i>
+                    <span>Тести з обмеженням часу</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-trophy-fill text-knu fs-4 me-3"></i>
+                    <span>Рейтинги та змагання</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA для неавторизованих -->
+    @if (!User.Identity?.IsAuthenticated ?? true)
+    {
+        <div class="text-center py-4">
+            <h5 class="section-title mb-4">Готові перевірити свої знання?</h5>
+            <a href="/Account/Register" class="btn btn-knu btn-lg px-5">
+                <i class="bi bi-person-plus me-2"></i>Зареєструватися
+            </a>
+        </div>
+    }
 </div>
