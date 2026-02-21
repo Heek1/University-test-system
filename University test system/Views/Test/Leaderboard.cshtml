@@ -18,6 +18,7 @@
             <th>Предмет</th>
             <th>Дата спроби</th>
             <th>Бали</th>
+            <th>Дії</th>
         </tr>
     </thead>
         <tbody class="knu-table tbody tr">
@@ -33,6 +34,15 @@
                     <td>@attempt.Test.Subject?.Name</td>
                     <td>@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>
                     <td>@attempt.Score</td>
+                    <td>
+                            <a asp-action="Result" asp-route-id="@attempt.Id" class="btn btn-knu w-100">
+                                Переглянути результат
+                        </a>
+
+                            <a asp-action="History" asp-controller="Test" class="btn btn-knu w-100">
+                                Перейти до історії тестів
+                        </a>
+                    </td>
                 </tr>
                 rank++;
             }

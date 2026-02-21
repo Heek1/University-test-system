@@ -29,10 +29,14 @@
                 <td>@attempt.Count</td>
                 <td>@attempt.Score</td>
                 <td>
-                    <a asp-action="Result" asp-route-id="@attempt.Id" class="btn-knu">
-                        Переглянути
+                    <a asp-action="Result" asp-route-id="@attempt.Id" class="btn btn-knu w-100">
+                            Переглянути результат
                     </a>
-                </td>
+
+                    <a asp-action="Leaderboard" asp-route-id="@attempt.Id" class="btn btn-knu w-100">
+                            Переглянути список лідерів
+                    </a>
+                </td>                    
             </tr>
         }
         </tbody>

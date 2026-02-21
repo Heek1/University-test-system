@@ -23,4 +23,8 @@
     </div>
 </div>
 
-<a asp-action="Index" asp-controller="Test" class="btn btn-primary mt-3">Повернутись до списку тестів</a>
+<a asp-action="Index" asp-controller="Test" class="btn btn-knu w-100">Повернутись до списку тестів</a>
+
+<a asp-action="History" asp-controller="Test" class="btn btn-knu w-100">Перейти до історії тестів</a>
+
+<a asp-action="Leaderboard" asp-controller="Test" asp-route-id="@Model.TestId" class="btn btn-knu w-100">Переглянути лідерів цього тесту</a>
