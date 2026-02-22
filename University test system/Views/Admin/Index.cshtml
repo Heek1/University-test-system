@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<University_test_system.Models.Test>
-
 @{
     ViewData["Title"] = "Тести";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -40,9 +39,13 @@
                     <td>@test.Time</td>
                     <td>@(test.Questions?.Count ?? 0)</td>
                     <td>
-                        <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id" class="btn btn-sm btn-outline-secondary me-1">Редагувати</a>
-
-                        <form asp-action="DeleteTest" asp-controller="Admin" asp-route-id="@test.Id" method="post" class="d-inline" onsubmit="return confirm('Видалити цей тест?');">
+                        <a asp-action="ManageQuestions" asp-controller="Admin" asp-route-id="@test.Id"
+                           class="btn btn-sm btn-outline-primary me-1">Питання</a>
+                        <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id"
+                           class="btn btn-sm btn-outline-secondary me-1">Редагувати</a>
+                        <form asp-action="DeleteTest" asp-controller="Admin" asp-route-id="@test.Id"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('Видалити цей тест?');">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
                         </form>
