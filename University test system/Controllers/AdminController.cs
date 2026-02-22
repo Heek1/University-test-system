@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using University_test_system.Models;
 using University_test_system.Data;
 using University_test_system.ViewModels.Tests;
+using Microsoft.AspNetCore.Identity;
 namespace University_test_system.Controllers;
 
 [Authorize(Roles = "Admin")]
@@ -11,9 +12,11 @@ public class AdminController : Controller
 {
     //Контролер для адміністрування тестів: створення, редагування, видалення
     private readonly ApplicationDbContext _context;
-    public AdminController(ApplicationDbContext context)
+    private readonly UserManager<User> _userManager;
+    public AdminController(ApplicationDbContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
     //Головна сторінка адміна - список тестів
     public async Task<IActionResult> Index()
@@ -110,7 +113,9 @@ public class AdminController : Controller
     //Сторінка зі списком всіх користувачів
     public async Task<IActionResult> ViewAllUsers()
     {
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users
+            .Include(u => u.Faculty)
+            .ToListAsync();
         return View("ViewAllUsers", users);
     }
     //Видалення користувача за Id
@@ -120,10 +125,89 @@ public class AdminController : Controller
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null) return NotFound();
+        
+        if (await _userManager.IsInRoleAsync(user, "Admin"))
+        {
+            TempData["Error"] = "Не можна видалити адміністратора";
+            return RedirectToAction(nameof(ViewAllUsers));
+        }
+        
         //Видаляємо користувача з бази даних
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
         TempData["Success"] = "Користувача видалено";
         return RedirectToAction(nameof(ViewAllUsers));
+    }
+    
+    public async Task<IActionResult> ManageQuestions(int id)
+    {
+        var test = await _context.Tests
+            .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (test == null) return NotFound();
+
+        return View(test);
+    }
+
+    public async Task<IActionResult> AddQuestion(int id)
+    {
+        var test = await _context.Tests.FindAsync(id);
+        if (test == null) return NotFound();
+
+        var model = new AddQuestionViewModel
+        {
+            TestId = id
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddQuestion(AddQuestionViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage);
+            TempData["Error"] = string.Join(", ", errors);
+            return View(model);
+        }
+
+        var question = new Question
+        {
+            Title = model.Title,
+            TestId = model.TestId,
+            Answers = model.Answers.Select(a => new Answer
+            {
+                Text = a.Text,
+                IsTrue = a.IsTrue
+            }).ToList()
+        };
+
+        _context.Questions.Add(question);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Питання додано";
+        return RedirectToAction("ManageQuestions", new { id = model.TestId });
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAnswer(int questionId, int testId, string text, bool isTrue)
+    {
+        var answer = new Answer
+        {
+            QuestionId = questionId,
+            Text = text,
+            IsTrue = isTrue
+        };
+        _context.Answers.Add(answer);
+        await _context.SaveChangesAsync();
+        TempData["Success"] = "Відповідь додано";
+        return RedirectToAction("ManageQuestions", new { id = testId });
     }
 }

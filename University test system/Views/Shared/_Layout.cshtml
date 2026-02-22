@@ -57,6 +57,11 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <li class="nav-item">
+                        <a class="nav-link" href="/Account/Register">
+                            <i class="bi bi-person-plus"></i>Додати користувача
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
                            href="/Admin/Index">
                             <i class="bi bi-speedometer2"></i>Панель адміна
@@ -92,9 +97,6 @@
                 {
                     <a href="/Account/Login" class="btn btn-sm btn-knu-outline" style="color:#fff;border-color:rgba(255,255,255,.5)">
                         <i class="bi bi-box-arrow-in-right"></i> Увійти
-                    </a>
-                    <a href="/Account/Register" class="btn btn-sm btn-knu" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4)">
-                        <i class="bi bi-person-plus"></i> Реєстрація
                     </a>
                 }
             </div>
