@@ -64,7 +64,7 @@ public class TestController : Controller
         // Якщо вже є спроба, оновлюємо її
         if (existing != null)
         {
-            existing.Count++;
+            existing.AttemptsCount++;
             existing.Score = score;
             existing.AttemptDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
@@ -76,7 +76,7 @@ public class TestController : Controller
         {
             UserId = userId,
             TestId = id,
-            Count = 1,
+            AttemptsCount = 1,
             Score = score,
             AttemptDate = DateTime.UtcNow
         };
@@ -122,7 +122,7 @@ public class TestController : Controller
     {        
         // Отримуємо всі спроби, включаючи інформацію про користувачів та тести
         var leaderboard = await _context.Attempts
-            .Include(a => a.User)
+            .Include(a => a.UserId)
             .Include(a => a.Test)
             .Where(a => a.TestId == testId) // Фільтруємо за тестом
             .OrderByDescending(a => a.Score) // Сортуємо за балами

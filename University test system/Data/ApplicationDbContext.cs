@@ -21,13 +21,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
-        modelBuilder.Entity<Subject>().HasData(
-            new Subject { Id = 1, Description = "-", Name = "Математика" },
-            new Subject { Id = 2, Description = "-", Name = "Фізика" },
-            new Subject { Id = 3, Description = "-", Name = "Інформатика" },
-            new Subject { Id = 4, Description = "-", Name = "Хімія" }
-        );
     }
     
 }

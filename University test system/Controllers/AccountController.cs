@@ -15,34 +15,6 @@ public class AccountController : Controller
         _authService = authService;
     }
 
-    // Сторінка реєстрації
-    public IActionResult Register()
-    {
-        if (User.Identity?.IsAuthenticated == true) // якщо вже залогінений
-            return RedirectToAction("Index", "Home");
-
-        return View();
-    }
-
-    // Обробка даних з форми реєстрації
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(RegisterViewModel model)
-    {
-        if (!ModelState.IsValid)
-            return View(model);
-
-        var result = await _authService.RegisterAsync(model);
-
-        if (result.Succeeded)
-            return RedirectToAction("Index", "Home");
-
-        foreach (var error in result.Errors)
-            ModelState.AddModelError(string.Empty, error.Description);
-
-        return View(model);
-    }
-
     // Сторінка входу
     public IActionResult Login(string? returnUrl = null)
     {
