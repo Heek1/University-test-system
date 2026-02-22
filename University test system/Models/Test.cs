@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Level { get; set; }
         public int SubjectId { get; set; }
         public Subject Subject { get; set; }
         public int Time { get; set; }
