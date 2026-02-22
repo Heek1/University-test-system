@@ -1,0 +1,330 @@
+﻿@model University_test_system.ViewModels.Tests.AddQuestionViewModel
+@{
+    ViewData["Title"] = "Додати питання";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .aq-wrapper {
+        max-width: 760px;
+        margin: 2.5rem auto;
+        padding: 0 1rem;
+    }
+
+    .aq-header {
+        margin-bottom: 2rem;
+    }
+
+    .aq-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .aq-header p {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .aq-card {
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+    }
+
+    .aq-card-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8B0000;
+        margin-bottom: 1rem;
+    }
+
+    .aq-form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .aq-form-control {
+        width: 100%;
+        padding: 0.6rem 0.875rem;
+        border: 1.5px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #1f2937;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background: #fafafa;
+    }
+
+    .aq-form-control:focus {
+        outline: none;
+        border-color: #8B0000;
+        box-shadow: 0 0 0 3px rgba(139,0,0,0.1);
+        background: #fff;
+    }
+
+    textarea.aq-form-control {
+        resize: vertical;
+        min-height: 90px;
+    }
+
+    /* Answer rows */
+    .answers-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .answer-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.75rem;
+        align-items: center;
+        padding: 0.875rem 1rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        background: #fafafa;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    .answer-row:hover {
+        border-color: #c0c4cc;
+        background: #fff;
+    }
+
+    .answer-row.is-correct {
+        border-color: #16a34a;
+        background: #f0fdf4;
+    }
+
+    .answer-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #6b7280;
+        flex-shrink: 0;
+        margin-right: 0.625rem;
+    }
+
+    .answer-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .answer-input-wrapper input[type="text"] {
+        flex: 1;
+        padding: 0.45rem 0.75rem;
+        border: 1.5px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        background: transparent;
+        transition: border-color 0.2s;
+    }
+
+    .answer-input-wrapper input[type="text"]:focus {
+        outline: none;
+        border-color: #8B0000;
+    }
+
+    .correct-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        white-space: nowrap;
+        padding: 0.4rem 0.75rem;
+        border: 1.5px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b7280;
+        background: #fff;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+    .correct-toggle input[type="checkbox"] {
+        display: none;
+    }
+
+    .correct-toggle .toggle-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #d1d5db;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+
+    .answer-row.is-correct .correct-toggle {
+        border-color: #16a34a;
+        color: #16a34a;
+        background: #f0fdf4;
+    }
+
+    .answer-row.is-correct .toggle-dot {
+        background: #16a34a;
+    }
+
+    .answer-row.is-correct .answer-index {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    /* Buttons */
+    .aq-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-aq-submit {
+        padding: 0.625rem 1.5rem;
+        background: #8B0000;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-aq-submit:hover {
+        background: #6b0000;
+        transform: translateY(-1px);
+    }
+
+    .btn-aq-back {
+        padding: 0.625rem 1.25rem;
+        background: transparent;
+        color: #6b7280;
+        border: 1.5px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .btn-aq-back:hover {
+        border-color: #9ca3af;
+        color: #374151;
+    }
+
+    .validation-message {
+        color: #dc2626;
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+    }
+</style>
+
+<div class="aq-wrapper">
+    <div class="aq-header">
+        <h2>Нове питання</h2>
+        <p>Додайте питання та варіанти відповідей. Позначте правильні.</p>
+    </div>
+
+    <form asp-action="AddQuestion" asp-controller="Admin" method="post" id="questionForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="TestId" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-message mb-3"></div>
+
+        <!-- Питання -->
+        <div class="aq-card">
+            <div class="aq-card-title">Текст питання</div>
+            <label asp-for="Title" class="aq-form-label">Питання</label>
+            <textarea asp-for="Title" class="aq-form-control" placeholder="Введіть текст питання..."></textarea>
+            <span asp-validation-for="Title" class="validation-message"></span>
+        </div>
+
+        <!-- Відповіді -->
+        <div class="aq-card">
+            <div class="aq-card-title">Варіанти відповідей</div>
+            <div class="answers-grid" id="answersGrid">
+                @{
+                    string[] labels = { "A", "B", "C", "D" };
+                }
+                @for (int i = 0; i < Model.Answers.Count; i++)
+                {
+                    <div class="answer-row" id="row_@i">
+                        <div class="answer-input-wrapper">
+                            <span class="answer-index">@labels[i % labels.Length]</span>
+                            <input type="text"
+                                   name="Answers[@i].Text"
+                                   value="@Model.Answers[i].Text"
+                                   placeholder="Варіант відповіді..."
+                                   class="aq-form-control" />
+                        </div>
+                        <label class="correct-toggle" onclick="toggleCorrect(@i, this)">
+                            <input type="checkbox"
+                                   name="Answers[@i].IsTrue"
+                                   value="true"
+                                   id="check_@i"
+                                   @(Model.Answers[i].IsTrue ? "checked" : "") />
+                            <span class="toggle-dot"></span>
+                            Правильна
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Дії -->
+        <div class="aq-actions">
+            <button type="submit" class="btn-aq-submit">
+                <i class="bi bi-plus-circle me-1"></i>Додати питання
+            </button>
+            <a asp-action="ManageQuestions" asp-controller="Admin" asp-route-id="@Model.TestId" class="btn-aq-back">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        function toggleCorrect(index, label) {
+            const checkbox = document.getElementById('check_' + index);
+            const row = document.getElementById('row_' + index);
+            // Toggle checkbox
+            checkbox.checked = !checkbox.checked;
+            // Update visual
+            if (checkbox.checked) {
+                row.classList.add('is-correct');
+            } else {
+                row.classList.remove('is-correct');
+            }
+        }
+
+        // Init visual state on load
+        document.querySelectorAll('[id^="check_"]').forEach(function(cb) {
+            if (cb.checked) {
+                const idx = cb.id.replace('check_', '');
+                document.getElementById('row_' + idx)?.classList.add('is-correct');
+            }
+        });
+    </script>
+}

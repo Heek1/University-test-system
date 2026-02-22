@@ -28,6 +28,7 @@ public class AuthService : IAuthService
         {
             UserName = model.Email,
             Email = model.Email,
+            FacultyId = model.FacultyId,
             RegisteredAt = DateTime.UtcNow
         };
 
@@ -41,8 +42,6 @@ public class AuthService : IAuthService
         }
 
         await _userManager.AddToRoleAsync(user, "User");
-
-        await _signInManager.SignInAsync(user, isPersistent: false);
 
         return IdentityResult.Success;
     }

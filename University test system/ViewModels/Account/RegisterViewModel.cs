@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using University_test_system.Models;
 
 namespace University_test_system.ViewModels.Account;
 
@@ -13,6 +14,11 @@ public class RegisterViewModel
     [Display(Name = "Ім'я")]
     [StringLength(50, MinimumLength = 2, ErrorMessage = "Від 2 до 50 символів")]
     public string DisplayName { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Оберіть факультет")]
+    public int FacultyId { get; set; }
+
+    public List<Faculty> Faculties { get; set; } = new();
     
     [Required(ErrorMessage = "Введіть пароль")]
     [DataType(DataType.Password)]

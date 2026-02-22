@@ -6,97 +6,467 @@
         <li class='breadcrumb-item active'>Питання тесту</li>";
 }
 
-<div class="knu-page-header">
-    <div class="container">
-        <h1><i class="bi bi-question-circle me-2"></i>@Model.Title</h1>
-        <p>Керування питаннями та відповідями</p>
-    </div>
-</div>
+<style>
+    .mq-wrapper {
+        max-width: 820px;
+        margin: 2rem auto;
+        padding: 0 1rem 4rem;
+    }
 
-<div class="container mb-5">
+    .mq-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
 
-    <div class="knu-card mb-4">
-        <div class="card-header">
-            <i class="bi bi-plus-circle me-2"></i>Додати питання
+    .mq-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        color: #1a1a2e;
+        margin: 0 0 0.2rem;
+    }
+
+    .mq-header p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    /* Add question form card */
+    .add-question-card {
+        background: #fff;
+        border: 2px dashed #d1d5db;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        transition: border-color 0.2s;
+    }
+
+    .add-question-card:focus-within {
+        border-color: #8B0000;
+        border-style: solid;
+    }
+
+    .add-question-card .section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #8B0000;
+        margin-bottom: 1rem;
+    }
+
+    .field-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.35rem;
+        display: block;
+    }
+
+    .mq-input {
+        width: 100%;
+        padding: 0.575rem 0.875rem;
+        border: 1.5px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        color: #1f2937;
+        background: #fafafa;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .mq-input:focus {
+        outline: none;
+        border-color: #8B0000;
+        box-shadow: 0 0 0 3px rgba(139,0,0,0.08);
+        background: #fff;
+    }
+
+    /* Answers inline grid */
+    .answers-inline {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        margin-top: 1rem;
+    }
+
+    @@media (max-width: 560px) {
+        .answers-inline { grid-template-columns: 1fr; }
+    }
+
+    .answer-inline-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 8px;
+        background: #fafafa;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    .answer-inline-row:focus-within {
+        border-color: #9ca3af;
+        background: #fff;
+    }
+
+    .answer-letter {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .answer-inline-row input[type="text"] {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 0.85rem;
+        color: #1f2937;
+        padding: 0;
+        min-width: 0;
+    }
+
+    .answer-inline-row input[type="text"]:focus {
+        outline: none;
+    }
+
+    .correct-check {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .correct-check input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        accent-color: #16a34a;
+        cursor: pointer;
+    }
+
+    .correct-check span {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #6b7280;
+        white-space: nowrap;
+    }
+
+    .answer-inline-row:has(input[type="checkbox"]:checked) {
+        border-color: #16a34a;
+        background: #f0fdf4;
+    }
+
+    .answer-inline-row:has(input[type="checkbox"]:checked) .answer-letter {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .answer-inline-row:has(input[type="checkbox"]:checked) .correct-check span {
+        color: #16a34a;
+    }
+
+    /* Submit */
+    .btn-add-q {
+        margin-top: 1.25rem;
+        padding: 0.6rem 1.5rem;
+        background: #8B0000;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-add-q:hover {
+        background: #6b0000;
+        transform: translateY(-1px);
+    }
+
+    /* Question cards */
+    .question-card {
+        background: #fff;
+        border: 1px solid #e8eaf0;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+
+    .question-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background: #f9fafb;
+        border-bottom: 1px solid #e8eaf0;
+        gap: 1rem;
+    }
+
+    .question-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #8B0000;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .question-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2937;
+        flex: 1;
+    }
+
+    .question-card-body {
+        padding: 1rem 1.25rem;
+    }
+
+    .answer-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
+    }
+
+    @@media (max-width: 560px) {
+        .answer-list { grid-template-columns: 1fr; }
+    }
+
+    .answer-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        background: #f9fafb;
+        border: 1px solid #f0f0f0;
+    }
+
+    .answer-list li.correct {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #166534;
+    }
+
+    /* Add answer inline */
+    .add-answer-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-top: 0.75rem;
+        border-top: 1px dashed #e5e7eb;
+    }
+
+    .add-answer-row input[type="text"] {
+        flex: 1;
+        min-width: 160px;
+        padding: 0.45rem 0.75rem;
+        border: 1.5px solid #d1d5db;
+        border-radius: 7px;
+        font-size: 0.85rem;
+        background: #fafafa;
+        transition: border-color 0.2s;
+    }
+
+    .add-answer-row input[type="text"]:focus {
+        outline: none;
+        border-color: #8B0000;
+        background: #fff;
+    }
+
+    .add-answer-row .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin: 0;
+    }
+
+    .add-answer-row .form-check input {
+        accent-color: #16a34a;
+    }
+
+    .btn-add-ans {
+        padding: 0.45rem 0.875rem;
+        background: transparent;
+        border: 1.5px solid #8B0000;
+        color: #8B0000;
+        border-radius: 7px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-add-ans:hover {
+        background: #8B0000;
+        color: #fff;
+    }
+
+    .btn-del {
+        padding: 0.3rem 0.5rem;
+        background: transparent;
+        border: 1.5px solid #e5e7eb;
+        color: #9ca3af;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        line-height: 1;
+    }
+
+    .btn-del:hover {
+        border-color: #dc2626;
+        color: #dc2626;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #9ca3af;
+    }
+
+    .empty-state i {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 0.75rem;
+    }
+</style>
+
+<div class="mq-wrapper">
+
+    <div class="mq-header">
+        <div>
+            <h2>@Model.Title</h2>
+            <p>Питань: @Model.Questions.Count · Управління питаннями та відповідями</p>
         </div>
-        <div class="card-body p-4">
-            <form asp-action="AddQuestion" method="post" class="d-flex gap-2">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="testId" value="@Model.Id" />
-                <input type="text" name="title" class="form-control"
-                       placeholder="Текст питання" required />
-                <button type="submit" class="btn btn-knu text-nowrap">
-                    <i class="bi bi-plus-lg me-1"></i>Додати
-                </button>
-            </form>
-        </div>
+        <a asp-action="Index" class="btn btn-knu-outline btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Назад
+        </a>
     </div>
 
+    <!-- ═══ ФОРМА ДОДАВАННЯ ПИТАННЯ ═══ -->
+    <div class="add-question-card">
+        <div class="section-label"><i class="bi bi-plus-circle me-1"></i>Нове питання</div>
+        <form asp-action="AddQuestion" asp-controller="Admin" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="TestId" value="@Model.Id" />
+
+            <label class="field-label">Текст питання</label>
+            <input type="text" name="Title" class="mq-input" placeholder="Введіть питання..." required />
+
+            <div class="mt-3">
+                <label class="field-label">Варіанти відповідей</label>
+                <div class="answers-inline">
+                    @foreach (var (letter, idx) in new[]{"A","B","C","D"}.Select((l,i)=>(l,i)))
+                    {
+                        <div class="answer-inline-row">
+                            <span class="answer-letter">@letter</span>
+                            <input type="text" name="Answers[@idx].Text" placeholder="Відповідь @letter..." />
+                            <label class="correct-check">
+                                <input type="checkbox" name="Answers[@idx].IsTrue" value="true" />
+                                <span>Вірна</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button type="submit" class="btn-add-q">
+                <i class="bi bi-plus-lg"></i>Додати питання
+            </button>
+        </form>
+    </div>
+
+    <!-- ═══ СПИСОК ПИТАНЬ ═══ -->
     @if (!Model.Questions.Any())
     {
-        <div class="text-center text-muted py-4">
-            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-            Питань поки немає
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            Питань поки немає. Додайте перше!
         </div>
     }
 
     @foreach (var (question, i) in Model.Questions.Select((q, i) => (q, i + 1)))
     {
-        <div class="knu-card mb-3">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <h6 class="mb-0">
-                        <span class="text-knu me-2">@i.</span>@question.Title
-                    </h6>
-                    <form asp-action="DeleteQuestion" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@question.Id" />
-                        <input type="hidden" name="testId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                onclick="return confirm('Видалити питання?')">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </form>
-                </div>
+        <div class="question-card">
+            <div class="question-card-header">
+                <span class="question-num">@i</span>
+                <span class="question-title">@question.Title</span>
+                <form asp-action="DeleteQuestion" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@question.Id" />
+                    <input type="hidden" name="testId" value="@Model.Id" />
+                    <button type="submit" class="btn-del" onclick="return confirm('Видалити питання?')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
 
-                <ul class="list-unstyled mb-3">
-                    @foreach (var answer in question.Answers)
-                    {
-                        <li class="d-flex align-items-center gap-2 mb-1">
-                            @if (answer.IsTrue)
-                            {
-                                <i class="bi bi-check-circle-fill text-success"></i>
-                            }
-                            else
-                            {
-                                <i class="bi bi-x-circle text-danger"></i>
-                            }
-                            <span>@answer.Text</span>
-                        </li>
-                    }
-                </ul>
+            <div class="question-card-body">
+                <!-- Відповіді -->
+                @if (question.Answers.Any())
+                {
+                    <ul class="answer-list">
+                        @foreach (var answer in question.Answers)
+                        {
+                            <li class="@(answer.IsTrue ? "correct" : "")">
+                                @if (answer.IsTrue)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-circle text-muted"></i>
+                                }
+                                @answer.Text
+                            </li>
+                        }
+                    </ul>
+                }
 
-                <form asp-action="AddAnswer" method="post"
-                      class="d-flex gap-2 align-items-center flex-wrap">
+                <!-- Додати відповідь -->
+                <form asp-action="AddAnswer" method="post" class="add-answer-row">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="questionId" value="@question.Id" />
                     <input type="hidden" name="testId" value="@Model.Id" />
-                    <input type="text" name="text" class="form-control" style="max-width:300px"
-                           placeholder="Текст відповіді" required />
-                    <div class="form-check mb-0">
+                    <input type="text" name="text" placeholder="Нова відповідь..." required />
+                    <div class="form-check">
                         <input type="checkbox" name="isTrue" value="true"
                                class="form-check-input" id="correct_@question.Id" />
-                        <label class="form-check-label" for="correct_@question.Id">Правильна</label>
+                        <label class="form-check-label small" for="correct_@question.Id">Правильна</label>
                     </div>
-                    <button type="submit" class="btn btn-knu-outline btn-sm">
-                        <i class="bi bi-plus-lg me-1"></i>Додати відповідь
+                    <button type="submit" class="btn-add-ans">
+                        <i class="bi bi-plus-lg me-1"></i>Відповідь
                     </button>
                 </form>
             </div>
         </div>
     }
-
-    <a asp-action="Index" class="btn btn-knu-outline mt-2">
-        <i class="bi bi-arrow-left me-1"></i>Назад до тестів
-    </a>
 </div>
