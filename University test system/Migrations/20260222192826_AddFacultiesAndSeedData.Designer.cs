@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using University_test_system.Data;
 
@@ -11,9 +12,11 @@ using University_test_system.Data;
 namespace University_test_system.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222192826_AddFacultiesAndSeedData")]
+    partial class AddFacultiesAndSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,7 +421,7 @@ namespace University_test_system.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("FacultyId")
+                    b.Property<int>("FacultyId")
                         .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
@@ -594,11 +597,11 @@ namespace University_test_system.Migrations
 
             modelBuilder.Entity("University_test_system.Models.User", b =>
                 {
-                    b.HasOne("University_test_system.Models.Faculty", "Faculty")
+                    b.HasOne("University_test_system.Models.Faculty", null)
                         .WithMany("Users")
-                        .HasForeignKey("FacultyId");
-
-                    b.Navigation("Faculty");
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("University_test_system.Models.Faculty", b =>

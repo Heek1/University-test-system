@@ -19,7 +19,8 @@ public class AdminController : Controller
     public async Task<IActionResult> Index()
     {
         var tests = await _context.Tests
-            .Include(t => t.SubjectId)
+            .Include(t => t.Subject)
+            .Include(t => t.Questions)
             .ToListAsync();
         return View(tests);
     }
@@ -48,7 +49,8 @@ public class AdminController : Controller
         {
             Title = model.Title,
             SubjectId = model.SubjectId,
-            Time = model.Time
+            Time = model.Time,
+            Level = model.Level
         };
         //Додаємо тест до бази даних
         _context.Tests.Add(test);
