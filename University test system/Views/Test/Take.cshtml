@@ -1,1 +1,36 @@
-﻿
+﻿@model University_test_system.Models.Test
+
+@{
+    ViewData["Title"] = "Проходження тесту";
+}
+
+<h2>@Model.Title</h2>
+<p><strong>Рівень:</strong> @Model.Level</p>
+<p><strong>Предмет:</strong> @Model.Subject?.Name</p>
+<p><strong>Час на виконання:</strong> @Model.Time хв.</p>
+
+<form asp-action="SubmitTest" method="post">
+    <input type="hidden" name="TestId" value="@Model.Id" />
+
+    @for (int i = 0; i < Model.Questions.Count; i++)
+    {
+        var question = Model.Questions[i];
+        <div class="question-block">
+            <h4>Питання @(i + 1): @question.Title</h4>
+
+            @for (int j = 0; j < question.Answers.Count; j++)
+            {
+                var answer = question.Answers[j];
+                <div>
+                    <input type="radio"
+                           name="Answers[@question.Id]"
+                           value="@answer.Id"
+                           id="answer_@answer.Id" />
+                    <label for="answer_@answer.Id">@answer.Text</label>
+                </div>
+            }
+        </div>
+    }
+
+    <button type="submit" class="btn btn-knu w-100">Завершити тест</button>
+</form>
