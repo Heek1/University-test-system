@@ -29,7 +29,8 @@ public class AuthService : IAuthService
             UserName = model.Email,
             Email = model.Email,
             FacultyId = model.FacultyId,
-            RegisteredAt = DateTime.UtcNow
+            RegisteredAt = DateTime.UtcNow,
+            DisplayName = model.DisplayName
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
