@@ -179,18 +179,21 @@ public class TestController : Controller
     //}
 
     // Сторінка результатів тесту
+    
     public async Task<IActionResult> Result(int id)
     {
-        // Отримуємо спробу за її ID, включаючи інформацію про тест
-        var userTest = await _context.Attempts
+        // Отримуємо спробу за її ID, включаючи інформацію про тест, предмет та користувача
+        var attempt = await _context.Attempts
             .Include(ut => ut.Test)
+            .ThenInclude(t => t.Subject) // Додаємо, щоб отримати назву предмету
+            .Include(ut => ut.User)          // Додаємо, щоб отримати ім'я/email користувача
             .FirstOrDefaultAsync(ut => ut.Id == id);
-        
-        if (userTest == null) return NotFound();
-    
-        return View(userTest);
-    }
 
+        if (attempt == null) return NotFound();
+
+        return View(attempt);
+    }
+    
     // Сторінка історії проходження тестів користувача
     public async Task<IActionResult> History()
     {

@@ -4,27 +4,103 @@
     ViewData["Title"] = "Результат тесту";
 }
 
-<div class="container text-center">
-    <h2 class="knu-page-header h1">@ViewData["Title"]</h2>
-</div>
-
-<div class="knu-card">
-    <div class="card-header">
-        <h4>@Model.Test.Title</h4>
-        <p><strong>Предмет:</strong> @Model.Test.Subject?.Name</p>
-        <p><strong>Час на виконання:</strong> @Model.Test.Time хв.</p>
-    </div>
-    <div class="card-header">
-        <p><strong>Користувач:</strong> @Model.User?.UserName (@Model.UserId)</p>
-        <p><strong>Email:</strong> @Model.User?.Email</p>
-        <p><strong>Дата спроби:</strong> @Model.AttemptDate.ToString("dd.MM.yyyy HH:mm")</p>
-        <p><strong>Номер спроби:</strong> @Model.AttemptsCount</p>
-        <p><strong>Набрані бали:</strong> @Model.Score</p>
+<div class="knu-page-header">
+    <div class="container">
+        <h1><i class="bi bi-clipboard-check me-2"></i>Результат тесту</h1>
+        <p>Детальна інформація про спробу</p>
     </div>
 </div>
 
-<a asp-action="Index" asp-controller="Test" class="btn btn-knu w-100">Повернутись до списку тестів</a>
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="knu-card">
+                <div class="card-header">
+                    <i class="bi bi-journal-text me-2"></i>@Model.Test.Title
+                </div>
+                <div class="card-body p-4">
 
-<a asp-action="History" asp-controller="Test" class="btn btn-knu w-100">Перейти до історії тестів</a>
+                    @* Інформація про студента *@
+                    <h5 class="section-title" style="font-size:1.1rem;">Студент</h5>
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-person-circle fs-4 text-knu"></i>
+                                <div>
+                                    <span class="text-muted small d-block">Ім'я користувача</span>
+                                    <strong>@(Model.User?.UserName ?? "—")</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-envelope fs-4 text-knu"></i>
+                                <div>
+                                    <span class="text-muted small d-block">Email</span>
+                                    <strong>@(Model.User?.Email ?? "—")</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-<a asp-action="Leaderboard" asp-controller="Test" asp-route-id="@Model.TestId" class="btn btn-knu w-100">Переглянути лідерів цього тесту</a>
+                    <hr class="divider-knu my-4" />
+
+                    @* Деталі тесту та спроби *@
+                    <h5 class="section-title" style="font-size:1.1rem;">Деталі спроби</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <small class="text-muted text-uppercase d-block">Предмет</small>
+                                <span class="fw-semibold">@(Model.Test.Subject?.Name ?? "—")</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <small class="text-muted text-uppercase d-block">Рівень складності</small>
+                                <span class="fw-semibold">@Model.Test.Level</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <small class="text-muted text-uppercase d-block">Дата та час спроби</small>
+                                <span class="fw-semibold">@Model.AttemptDate.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <small class="text-muted text-uppercase d-block">Номер спроби</small>
+                                <span class="fw-semibold">@Model.AttemptsCount / @Model.Test.MaxAttempts</span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light p-3 rounded-3">
+                                <small class="text-muted text-uppercase d-block">Час на виконання тесту</small>
+                                <span class="fw-semibold"><i class="bi bi-clock me-1"></i>@Model.Test.Time хвилин</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="divider-knu my-4" />
+
+                    @* Результат *@
+                    <div class="text-center py-4">
+                        <div class="display-1 fw-bold text-knu">@Model.Score</div>
+                        <span class="text-muted">набраних балів</span>
+                    </div>
+
+                </div>
+                <div class="card-footer bg-transparent d-flex flex-wrap gap-2 justify-content-center p-3">
+                    <a asp-action="Index" asp-controller="Test" class="btn btn-knu-outline">
+                        <i class="bi bi-journal-text me-1"></i>До списку тестів
+                    </a>
+                    <a asp-action="History" asp-controller="Test" class="btn btn-knu-outline">
+                        <i class="bi bi-clock-history me-1"></i>Моя історія
+                    </a>
+                    <a asp-action="Leaderboard" asp-controller="Test" asp-route-testId="@Model.TestId" class="btn btn-knu">
+                        <i class="bi bi-trophy me-1"></i>Лідерборд тесту
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
