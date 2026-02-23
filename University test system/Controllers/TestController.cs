@@ -23,7 +23,26 @@ public class TestController : Controller
     
     public async Task<IActionResult> Index()
     {
-        var tests = await _context.Tests.ToListAsync();
+        var user = await _userManager.GetUserAsync(User);
+
+        IQueryable<Test> query = _context.Tests
+            .Include(t => t.Subject)
+            .Include(t => t.Questions)
+            .Include(t => t.TestFaculties);
+
+        if (user.FacultyId.HasValue)
+        {
+            query = query.Where(t =>
+                t.TestFaculties.Any(tf => tf.FacultyId == user.FacultyId));
+        }
+
+        var tests = await query.ToListAsync();
+        
+        var attempts = await _context.Attempts
+            .Where(a => a.UserId == user.Id)
+            .ToDictionaryAsync(a => a.TestId, a => a.AttemptsCount);
+
+        ViewBag.Attempts = attempts;
         return View(tests);
     }
 
@@ -33,21 +52,21 @@ public class TestController : Controller
         //var test = await _context.Tests.FindAsync(id);
 
         var test = await _context.Tests
-        .Include(t => t.Questions)
+            .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
-        .FirstOrDefaultAsync(t => t.Id == id);
+            .FirstOrDefaultAsync(t => t.Id == id);
+
 
         if (test == null) return NotFound();
         
         var userId = _userManager.GetUserId(User);
 
-        // Перевіряємо, чи користувач вже проходив цей тест
-        var alreadyTaken = await _context.Attempts
-            .AnyAsync(ut => ut.UserId == userId && ut.TestId == id);
+        var attempt = await _context.Attempts
+            .FirstOrDefaultAsync(ut => ut.UserId == userId && ut.TestId == id);
         
-        if (alreadyTaken)
+        if (attempt != null && attempt.AttemptsCount >= test.MaxAttempts)
         {
-            TempData["Warning"] = "Ви вже проходили цей тест";
+            TempData["Warning"] = $"Ви вичерпали всі спроби для цього тесту ({test.MaxAttempts})";
             return RedirectToAction(nameof(Index));
         }
         

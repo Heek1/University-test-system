@@ -24,7 +24,9 @@ public class AdminController : Controller
         var tests = await _context.Tests
             .Include(t => t.Subject)
             .Include(t => t.Questions)
+            .Include(t => t.TestFaculties)
             .ToListAsync();
+
         return View(tests);
     }
 
@@ -33,7 +35,8 @@ public class AdminController : Controller
     {
         var model = new AddTestViewModel
         {
-            Subjects = await _context.Subjects.ToListAsync()
+            Subjects = await _context.Subjects.ToListAsync(),
+            Faculties = await _context.Faculties.ToListAsync()
         };
         return View(model);
     }
@@ -42,9 +45,14 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateTest(AddTestViewModel model)
     {
+        if (!model.SelectedFacultyIds.Any())
+        {
+            ModelState.AddModelError("SelectedFacultyIds", "Оберіть хоча б один факультет");
+        }
         if (!ModelState.IsValid)
         {
             model.Subjects = await _context.Subjects.ToListAsync();
+            model.Faculties = await _context.Faculties.ToListAsync();
             return View(model);
         }
         //Створюємо новий тест на основі даних з форми
@@ -53,11 +61,24 @@ public class AdminController : Controller
             Title = model.Title,
             SubjectId = model.SubjectId,
             Time = model.Time,
-            Level = model.Level
+            Level = model.Level,
+            MaxAttempts = model.MaxAttempts
         };
         //Додаємо тест до бази даних
         _context.Tests.Add(test);
         await _context.SaveChangesAsync();
+        
+        foreach (var facultyId in model.SelectedFacultyIds)
+        {
+            _context.TestFaculties.Add(new TestFaculty
+            {
+                TestId = test.Id,
+                FacultyId = facultyId
+            });
+        }
+
+        await _context.SaveChangesAsync();
+        
         TempData["Success"] = "Тест створено";
         return RedirectToAction(nameof(Index));
     }

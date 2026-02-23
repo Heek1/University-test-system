@@ -1,11 +1,14 @@
 ﻿@model University_test_system.ViewModels.Tests.AddTestViewModel
-
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     ViewData["Title"] = "Редагувати тест";
     ViewData["Breadcrumb"] = @"
         <li class='breadcrumb-item'><a href='/Admin/Index'>Адмін</a></li>
         <li class='breadcrumb-item active'>Редагувати тест</li>";
 }
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 
 <div class="knu-page-header">
     <div class="container">
@@ -32,18 +35,51 @@
                         </div>
 
                         <div class="mb-3">
+                            <label asp-for="Level" class="form-label">Рівень складності</label>
+                            <select asp-for="Level" class="form-select"
+                                    asp-items="@(new SelectList(Model.Levels))">
+                                <option value="">-- Оберіть рівень складності --</option>
+                            </select>
+                            <span asp-validation-for="Level" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
                             <label asp-for="SubjectId" class="form-label">Предмет</label>
                             <select asp-for="SubjectId" class="form-select"
-                                    asp-items="@(new SelectList(Model.Subjects, "Id", "Name"))">
+                                    asp-items="@(new SelectList(Model.Subjects, "Id", "Name", Model.SubjectId))">
                                 <option value="">-- Оберіть предмет --</option>
                             </select>
                             <span asp-validation-for="SubjectId" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label asp-for="Time" class="form-label">Час (хвилини)</label>
-                            <input asp-for="Time" class="form-control" type="number" placeholder="Наприклад: 30" />
+                            <input asp-for="Time" class="form-control" type="number" min="1" max="300" placeholder="Наприклад: 30" />
                             <span asp-validation-for="Time" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MaxAttempts" class="form-label">Кількість спроб</label>
+                            <input asp-for="MaxAttempts" class="form-control" type="number" min="1" max="10" />
+                            <span asp-validation-for="MaxAttempts" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Факультети</label>
+                            <select name="SelectedFacultyIds" id="faculties-select"
+                                    class="form-select" multiple="multiple" style="width:100%">
+                                @foreach (var faculty in Model.Faculties)
+                                {
+                                    if (Model.SelectedFacultyIds.Contains(faculty.Id))
+                                    {
+                                        <option value="@faculty.Id" selected>@faculty.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@faculty.Id">@faculty.Name</option>
+                                    }
+                                }
+                            </select>
                         </div>
 
                         <div class="d-flex gap-2">
@@ -63,4 +99,14 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $('#faculties-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Оберіть факультети...',
+            allowClear: true
+        });
+    </script>
 }

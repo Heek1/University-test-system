@@ -34,6 +34,16 @@ public class ApplicationDbContext : IdentityDbContext<User>
         modelBuilder.Entity<TestFaculty>()
             .HasKey(tf => new { tf.TestId, tf.FacultyId });
         
+        modelBuilder.Entity<TestFaculty>()
+            .HasOne(tf => tf.Test)
+            .WithMany(t => t.TestFaculties)
+            .HasForeignKey(tf => tf.TestId);
+
+        modelBuilder.Entity<TestFaculty>()
+            .HasOne(tf => tf.Faculty)
+            .WithMany()
+            .HasForeignKey(tf => tf.FacultyId);
+        
         modelBuilder.Entity<Subject>().HasData(
             new Subject { Id = 1, Name = "Математика", Type = "STEM", Description = "" },
             new Subject { Id = 2, Name = "Фізика", Type = "STEM", Description = "" },

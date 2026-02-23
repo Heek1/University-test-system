@@ -20,31 +20,17 @@
     }
 
     @{
-        // Групуємо тести за предметами
         var testsBySubject = Model
-            .GroupBy(t => t.SubjectId)
-            .OrderBy(g => g.Key)
+            .GroupBy(t => t.Subject)
+            .OrderBy(g => g.Key?.Name)
             .ToList();
     }
 
     @foreach (var subjectGroup in testsBySubject)
     {
-        
-        string subjectName = subjectGroup.Key switch
-        {
-            1 => "Математика",
-            2 => "Фізика",
-            3 => "Хімія",
-            4 => "Біологія",       // Додано біологію як приклад
-            5 => "Історія",        // Додано історію як приклад
-            6 => "Іноземна мова",  // Додано іноземну мову як приклад
-            7 => "Література",     // Додано літературу як приклад
-            _ => "Інший предмет"
-        };
-        
         <div class="mb-5">
             <h3 class="section-title mb-4">
-                <i class="bi bi-book me-2"></i>@subjectName
+                <i class="bi bi-book me-2"></i>@(subjectGroup.Key?.Name ?? "Інший предмет")
             </h3>
             
             <div class="row g-4">
@@ -60,16 +46,40 @@
                                         <i class="bi bi-clock me-2"></i>
                                         <span>Час виконання: @test.Time хвилин</span>
                                     </div>
-                                    <div class="d-flex align-items-center text-muted small">
+                                    <div class="d-flex align-items-center text-muted small mb-2">
                                         <i class="bi bi-question-circle me-2"></i>
-                                        <span>Кількість питань: невідомо</span>
+                                        <span>Кількість питань: @(test.Questions?.Count ?? 0)</span>
+                                    </div>
+                                    @{
+                                        var attempts = ViewBag.Attempts as Dictionary<int, int> ?? new();
+                                        int used = attempts.ContainsKey(test.Id) ? attempts[test.Id] : 0;
+                                        int left = test.MaxAttempts - used;
+                                    }
+                                    <div class="d-flex align-items-center text-muted small">
+                                        <i class="bi bi-arrow-repeat me-2"></i>
+                                        @if (left > 0)
+                                        {
+                                            <span>Залишилось спроб: @left з @test.MaxAttempts</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Спроби вичерпано</span>
+                                        }
                                     </div>
                                 </div>
 
-                                <a asp-action="Take" asp-route-id="@test.Id" 
-                                   class="btn btn-knu w-100">
-                                    <i class="bi bi-play-circle me-2"></i>Розпочати тест
-                                </a>
+                                @if (left > 0)
+{
+    <a asp-action="Take" asp-route-id="@test.Id" class="btn btn-knu w-100">
+        <i class="bi bi-play-circle me-2"></i>Розпочати тест
+    </a>
+}
+else
+{
+    <button class="btn btn-secondary w-100" disabled>
+        <i class="bi bi-x-circle me-2"></i>Спроби вичерпано
+    </button>
+}
                             </div>
                         </div>
                     </div>

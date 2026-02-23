@@ -4,6 +4,10 @@
     ViewData["Title"] = "Створення тестів";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
 <h2>Створити тест</h2>
 
 <form asp-action="CreateTest" asp-controller="Admin" method="post">
@@ -15,7 +19,7 @@
         <input asp-for="Title" class="form-control" />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
-    
+
     <div class="form-group mb-3">
         <label asp-for="Level" class="form-label"></label>
         <select asp-for="Level" class="form-control"
@@ -39,6 +43,31 @@
         <input asp-for="Time" class="form-control" type="number" min="1" max="300" />
         <span asp-validation-for="Time" class="text-danger"></span>
     </div>
+    
+    <div class="form-group mb-3">
+        <label asp-for="MaxAttempts" class="form-label"></label>
+        <input asp-for="MaxAttempts" class="form-control" type="number" min="1" max="10" />
+        <span asp-validation-for="MaxAttempts" class="text-danger"></span>
+    </div>
+
+    <!-- Факультети -->
+    <div class="form-group mb-3">
+        <label class="form-label">Факультети</label>
+        <select name="SelectedFacultyIds" id="faculties-select"
+                class="form-select" multiple="multiple" style="width:100%">
+            @foreach (var faculty in Model.Faculties)
+            {
+                if (Model.SelectedFacultyIds.Contains(faculty.Id))
+                {
+                    <option value="@faculty.Id" selected>@faculty.Name</option>
+                }
+                else
+                {
+                    <option value="@faculty.Id">@faculty.Name</option>
+                }
+            }
+        </select>
+    </div>
 
     <button type="submit" class="btn btn-knu-outline">Створити</button>
     <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary ms-2">Назад</a>
@@ -48,4 +77,14 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $('#faculties-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Оберіть факультети...',
+            allowClear: true
+        });
+    </script>
 }
