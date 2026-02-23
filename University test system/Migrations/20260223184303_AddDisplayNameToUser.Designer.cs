@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using University_test_system.Data;
 
@@ -11,9 +12,11 @@ using University_test_system.Data;
 namespace University_test_system.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260223184303_AddDisplayNameToUser")]
+    partial class AddDisplayNameToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,7 +180,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("University_test_system.Models.Attempt", b =>
@@ -210,7 +213,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Attempts", (string)null);
+                    b.ToTable("Attempts");
                 });
 
             modelBuilder.Entity("University_test_system.Models.Faculty", b =>
@@ -227,7 +230,7 @@ namespace University_test_system.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Faculties", (string)null);
+                    b.ToTable("Faculties");
 
                     b.HasData(
                         new
@@ -276,7 +279,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("TestId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("University_test_system.Models.Subject", b =>
@@ -301,7 +304,7 @@ namespace University_test_system.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
 
                     b.HasData(
                         new
@@ -367,6 +370,9 @@ namespace University_test_system.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MaxAttempts")
+                        .HasColumnType("int");
+
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
@@ -381,7 +387,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Tests", (string)null);
+                    b.ToTable("Tests");
                 });
 
             modelBuilder.Entity("University_test_system.Models.TestFaculty", b =>
@@ -396,7 +402,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("TestFaculties", (string)null);
+                    b.ToTable("TestFaculties");
                 });
 
             modelBuilder.Entity("University_test_system.Models.User", b =>

@@ -112,7 +112,7 @@ public class TestController : Controller
         {
             existing.AttemptsCount++;
             existing.Score = score;
-            existing.AttemptDate = DateTime.UtcNow;
+            existing.AttemptDate = DateTime.Now;
             await _context.SaveChangesAsync();
             return RedirectToAction("Result", new { id = existing.Id });
         }
@@ -124,7 +124,7 @@ public class TestController : Controller
             TestId = submission.TestId,
             AttemptsCount = 1,
             Score = score,
-            AttemptDate = DateTime.UtcNow
+            AttemptDate = DateTime.Now
         };
 
         // Додаємо спробу до бази даних

@@ -7,5 +7,6 @@ namespace University_test_system.Models
         public int? FacultyId { get; set; }
         public Faculty? Faculty { get; set; }
         public DateTime RegisteredAt { get; set; }
+        public string? DisplayName { get; set; }
     }
 }
