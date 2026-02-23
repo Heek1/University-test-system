@@ -197,6 +197,12 @@ public class AdminController : Controller
             TempData["Error"] = string.Join(", ", errors);
             return View(model);
         }
+        
+        if (!model.Answers.Any(a => a.IsTrue))
+        {
+            TempData["Error"] = "Питання повинно мати хоча б одну правильну відповідь";
+            return View(model);
+        }
 
         var question = new Question
         {
@@ -216,19 +222,14 @@ public class AdminController : Controller
         return RedirectToAction("ManageQuestions", new { id = model.TestId });
     }
     
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddAnswer(int questionId, int testId, string text, bool isTrue)
+    
+    public async Task<IActionResult> DeleteQuestion(int id, int testId)
     {
-        var answer = new Answer
-        {
-            QuestionId = questionId,
-            Text = text,
-            IsTrue = isTrue
-        };
-        _context.Answers.Add(answer);
+        var question = await _context.Questions.FindAsync(id);
+        if (question == null) return NotFound();
+        _context.Questions.Remove(question);
         await _context.SaveChangesAsync();
-        TempData["Success"] = "Відповідь додано";
+        TempData["Success"] = "Питання видалено";
         return RedirectToAction("ManageQuestions", new { id = testId });
     }
 }

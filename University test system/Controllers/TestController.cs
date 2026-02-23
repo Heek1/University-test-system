@@ -185,8 +185,10 @@ public class TestController : Controller
         // Отримуємо спробу за її ID, включаючи інформацію про тест, предмет та користувача
         var attempt = await _context.Attempts
             .Include(ut => ut.Test)
-            .ThenInclude(t => t.Subject) // Додаємо, щоб отримати назву предмету
-            .Include(ut => ut.User)          // Додаємо, щоб отримати ім'я/email користувача
+            .ThenInclude(t => t.Subject)
+            .Include(ut => ut.Test)
+            .ThenInclude(t => t.Questions)
+            .Include(ut => ut.User)
             .FirstOrDefaultAsync(ut => ut.Id == id);
 
         if (attempt == null) return NotFound();
@@ -202,6 +204,7 @@ public class TestController : Controller
         // Отримуємо всі спроби користувача, включаючи інформацію про тести, відсортовані за датою
         var history = await _context.Attempts
             .Include(a => a.Test)
+            .ThenInclude(t => t.Subject)
             .Where(a => a.UserId == userId)
             .OrderByDescending(a => a.AttemptDate)
             .ToListAsync();

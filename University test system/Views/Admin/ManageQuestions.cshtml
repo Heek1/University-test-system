@@ -450,22 +450,6 @@
                         }
                     </ul>
                 }
-
-                <!-- Додати відповідь -->
-                <form asp-action="AddAnswer" method="post" class="add-answer-row">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="questionId" value="@question.Id" />
-                    <input type="hidden" name="testId" value="@Model.Id" />
-                    <input type="text" name="text" placeholder="Нова відповідь..." required />
-                    <div class="form-check">
-                        <input type="checkbox" name="isTrue" value="true"
-                               class="form-check-input" id="correct_@question.Id" />
-                        <label class="form-check-label small" for="correct_@question.Id">Правильна</label>
-                    </div>
-                    <button type="submit" class="btn-add-ans">
-                        <i class="bi bi-plus-lg me-1"></i>Відповідь
-                    </button>
-                </form>
             </div>
         </div>
     }
