@@ -1,4 +1,4 @@
-@model IEnumerable<University_test_system.Models.Attempt>
+@model IEnumerable<University_test_system.Models.Attempt> 
 
 @{
     ViewData["Title"] = "Історія проходження тестів";
@@ -33,7 +33,7 @@
                             Переглянути результат
                     </a>
 
-                    <a asp-action="Leaderboard" asp-route-id="@attempt.Id" class="btn btn-knu w-100">
+                        <a asp-action="Leaderboard" asp-controller="Test" asp-route-testId="@attempt.TestId" class="btn btn-knu w-100">
                             Переглянути список лідерів
                     </a>
                 </td>                    
