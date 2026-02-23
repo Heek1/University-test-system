@@ -12,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         //Database.EnsureCreated();
     }
     
+    public DbSet<User> Users => Set<User>();
     public DbSet<Test> Tests => Set<Test>();
     public DbSet<Subject> Subjects => Set<Subject>();
     public DbSet<Question> Questions => Set<Question>();
@@ -23,6 +24,12 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Faculty)
+            .WithMany(f => f.Users)
+            .HasForeignKey(u => u.FacultyId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<TestFaculty>()
             .HasKey(tf => new { tf.TestId, tf.FacultyId });

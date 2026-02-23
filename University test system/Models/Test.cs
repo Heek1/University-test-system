@@ -7,7 +7,7 @@
         public string Level { get; set; }
         public int SubjectId { get; set; }
         public Subject? Subject { get; set; }
-        public List<Question>? Questions { get; set; }
+        public List<Question>? Questions { get; set; } = new List<Question>();
         public int Time { get; set; }
     }
 }

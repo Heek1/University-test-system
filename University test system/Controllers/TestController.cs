@@ -30,7 +30,13 @@ public class TestController : Controller
     // Сторінка проходження тесту
     public async Task<IActionResult> Take(int id)
     {
-        var test = await _context.Tests.FindAsync(id);
+        //var test = await _context.Tests.FindAsync(id);
+
+        var test = await _context.Tests
+        .Include(t => t.Questions)
+            .ThenInclude(q => q.Answers)
+        .FirstOrDefaultAsync(t => t.Id == id);
+
         if (test == null) return NotFound();
         
         var userId = _userManager.GetUserId(User);
@@ -65,6 +71,12 @@ public class TestController : Controller
 
         // Підрахунок балів
         int score = 0;
+
+        if (submission.QuestionAnswers == null || submission.QuestionAnswers.Count == 0)
+        {
+            submission.QuestionAnswers = new Dictionary<int, int>();
+        }
+
         foreach (var entry in submission.QuestionAnswers)
         {
             var question = test.Questions.FirstOrDefault(q => q.Id == entry.Key);
@@ -180,7 +192,7 @@ public class TestController : Controller
     {        
         // Отримуємо всі спроби, включаючи інформацію про користувачів та тести
         var leaderboard = await _context.Attempts
-            .Include(a => a.UserId)
+            .Include(a => a.User)
             .Include(a => a.Test)
             .Where(a => a.TestId == testId) // Фільтруємо за тестом
             .OrderByDescending(a => a.Score) // Сортуємо за балами
