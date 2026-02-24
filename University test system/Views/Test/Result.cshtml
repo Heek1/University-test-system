@@ -28,7 +28,7 @@
                                 <i class="bi bi-person-circle fs-4 text-knu"></i>
                                 <div>
                                     <span class="text-muted small d-block">Ім'я користувача</span>
-                                    <strong>@(Model.User?.DisplayName ?? "—")</strong>
+                                    <strong>@(Model.User?.DisplayName ?? Model.User?.UserName ?? "—")</strong>
                                 </div>
                             </div>
                         </div>
@@ -72,9 +72,29 @@
                                 <span class="fw-semibold">@Model.AttemptsCount / @Model.Test.MaxAttempts</span>
                             </div>
                         </div>
-                        <div class="col-12">
+                        
+                        @* ⬇️ НОВИЙ БЛОК - Час виконання (тепер з БД) ⬇️ *@
+                        <div class="col-md-6">
                             <div class="bg-light p-3 rounded-3">
-                                <small class="text-muted text-uppercase d-block">Час на виконання тесту</small>
+                                <small class="text-muted text-uppercase d-block">Час виконання</small>
+                                <span class="fw-semibold">
+                                    <i class="bi bi-hourglass-split me-1"></i>
+                                    @if (Model.TimeSpentSeconds.HasValue)
+                                    {
+                                        var ts = TimeSpan.FromSeconds(Model.TimeSpentSeconds.Value);
+                                        @($"{ts.Minutes} хв {ts.Seconds} сек")
+                                    }
+                                    else
+                                    {
+                                        @("—")
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <small class="text-muted text-uppercase d-block">Ліміт часу</small>
                                 <span class="fw-semibold"><i class="bi bi-clock me-1"></i>@Model.Test.Time хвилин</span>
                             </div>
                         </div>

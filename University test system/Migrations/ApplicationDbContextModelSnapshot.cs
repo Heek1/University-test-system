@@ -177,7 +177,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("University_test_system.Models.Attempt", b =>
@@ -200,6 +200,9 @@ namespace University_test_system.Migrations
                     b.Property<int>("TestId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TimeSpentSeconds")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -210,7 +213,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Attempts", (string)null);
+                    b.ToTable("Attempts");
                 });
 
             modelBuilder.Entity("University_test_system.Models.Faculty", b =>
@@ -227,7 +230,7 @@ namespace University_test_system.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Faculties", (string)null);
+                    b.ToTable("Faculties");
 
                     b.HasData(
                         new
@@ -276,7 +279,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("TestId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("University_test_system.Models.Subject", b =>
@@ -301,7 +304,7 @@ namespace University_test_system.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
 
                     b.HasData(
                         new
@@ -384,7 +387,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Tests", (string)null);
+                    b.ToTable("Tests");
                 });
 
             modelBuilder.Entity("University_test_system.Models.TestFaculty", b =>
@@ -399,7 +402,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("TestFaculties", (string)null);
+                    b.ToTable("TestFaculties");
                 });
 
             modelBuilder.Entity("University_test_system.Models.User", b =>

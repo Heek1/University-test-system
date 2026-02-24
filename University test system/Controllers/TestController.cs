@@ -49,13 +49,10 @@ public class TestController : Controller
     // Сторінка проходження тесту
     public async Task<IActionResult> Take(int id)
     {
-        //var test = await _context.Tests.FindAsync(id);
-
         var test = await _context.Tests
             .Include(t => t.Questions)
             .ThenInclude(q => q.Answers)
             .FirstOrDefaultAsync(t => t.Id == id);
-
 
         if (test == null) return NotFound();
         
@@ -70,10 +67,13 @@ public class TestController : Controller
             return RedirectToAction(nameof(Index));
         }
         
+       
+        HttpContext.Session.SetString($"TestStart_{id}", DateTime.Now.ToString("o"));
+        
         return View(test);
     }
 
-    // Обробка результатів тесту
+    // Обробка результатів тесту (ОСНОВНИЙ МЕТОД)
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Take(TestSubmissionViewModel submission)
@@ -103,6 +103,14 @@ public class TestController : Controller
             if (chosen?.IsTrue == true) score++;
         }
 
+ 
+        DateTime? startTime = null;
+        if (HttpContext.Session.GetString($"TestStart_{submission.TestId}") != null)
+        {
+            startTime = DateTime.Parse(HttpContext.Session.GetString($"TestStart_{submission.TestId}"));
+            HttpContext.Session.Remove($"TestStart_{submission.TestId}");
+        }
+
         // Перевірка чи вже є спроба
         var existing = await _context.Attempts
             .FirstOrDefaultAsync(a => a.UserId == userId && a.TestId == submission.TestId);
@@ -113,18 +121,34 @@ public class TestController : Controller
             existing.AttemptsCount++;
             existing.Score = score;
             existing.AttemptDate = DateTime.Now;
+            
+
+            if (startTime.HasValue)
+            {
+                existing.TimeSpentSeconds = (int)(DateTime.Now - startTime.Value).TotalSeconds;
+            }
+            
             await _context.SaveChangesAsync();
+            
             return RedirectToAction("Result", new { id = existing.Id });
         }
 
-        // Створюємо нову спробу
+
+        int? timeSpentSeconds = null;
+        if (startTime.HasValue)
+        {
+            timeSpentSeconds = (int)(DateTime.Now - startTime.Value).TotalSeconds;
+        }
+
+        // Створюємо нову спробу з часом виконання
         var attempt = new Attempt
         {
             UserId = userId,
             TestId = submission.TestId,
             AttemptsCount = 1,
             Score = score,
-            AttemptDate = DateTime.Now
+            AttemptDate = DateTime.Now,
+            TimeSpentSeconds = timeSpentSeconds 
         };
 
         // Додаємо спробу до бази даних
@@ -136,50 +160,51 @@ public class TestController : Controller
         return RedirectToAction("Result", new { id = attempt.Id });
     }
 
-    // Обробка результатів тесту
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> Take(int id, int score)
-    //{
-    //    var test = await _context.Tests.FindAsync(id);
-    //    if (test == null) return NotFound();
+    // Обробка результатів тесту (ЗАКОМЕНТОВАНИЙ МЕТОД - ЗАЛИШАЄМО)
+    /*
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Take(int id, int score)
+    {
+        var test = await _context.Tests.FindAsync(id);
+        if (test == null) return NotFound();
     
-    //    var userId = _userManager.GetUserId(User);
+        var userId = _userManager.GetUserId(User);
 
-    //    // Перевіряємо, чи користувач вже проходив цей тест
-    //    var existing = await _context.Attempts
-    //        .FirstOrDefaultAsync(a => a.UserId == userId && a.TestId == id);
+        // Перевіряємо, чи користувач вже проходив цей тест
+        var existing = await _context.Attempts
+            .FirstOrDefaultAsync(a => a.UserId == userId && a.TestId == id);
 
-    //    // Якщо вже є спроба, оновлюємо її
-    //    if (existing != null)
-    //    {
-    //        existing.AttemptsCount++;
-    //        existing.Score = score;
-    //        existing.AttemptDate = DateTime.UtcNow;
-    //        await _context.SaveChangesAsync();
-    //        return RedirectToAction("Result", new { id = existing.Id });
-    //    }
+        // Якщо вже є спроба, оновлюємо її
+        if (existing != null)
+        {
+            existing.AttemptsCount++;
+            existing.Score = score;
+            existing.AttemptDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Result", new { id = existing.Id });
+        }
 
-    //    // Створюємо нову спробу
-    //    var attempt = new Attempt
-    //    {
-    //        UserId = userId,
-    //        TestId = id,
-    //        AttemptsCount = 1,
-    //        Score = score,
-    //        AttemptDate = DateTime.UtcNow
-    //    };
+        // Створюємо нову спробу
+        var attempt = new Attempt
+        {
+            UserId = userId,
+            TestId = id,
+            AttemptsCount = 1,
+            Score = score,
+            AttemptDate = DateTime.UtcNow
+        };
 
-    //    // Додаємо спробу до бази даних
-    //    _context.Attempts.Add(attempt);
-    //    await _context.SaveChangesAsync();
+        // Додаємо спробу до бази даних
+        _context.Attempts.Add(attempt);
+        await _context.SaveChangesAsync();
     
-    //    TempData["Success"] = "Тест завершено";
-    //    return RedirectToAction("Result", new { id = attempt.Id });
-    //}
+        TempData["Success"] = "Тест завершено";
+        return RedirectToAction("Result", new { id = attempt.Id });
+    }
+    */
 
     // Сторінка результатів тесту
-    
     public async Task<IActionResult> Result(int id)
     {
         // Отримуємо спробу за її ID, включаючи інформацію про тест, предмет та користувача
@@ -192,6 +217,7 @@ public class TestController : Controller
             .FirstOrDefaultAsync(ut => ut.Id == id);
 
         if (attempt == null) return NotFound();
+
 
         return View(attempt);
     }

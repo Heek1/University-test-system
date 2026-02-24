@@ -10,5 +10,7 @@
         public int AttemptsCount { get; set; }      // кількість спроб
         public int Score { get; set; }  // набрані бали
         public DateTime AttemptDate { get; set; } = DateTime.Now;
+        
+        public int? TimeSpentSeconds { get; set; }
     }
 }
