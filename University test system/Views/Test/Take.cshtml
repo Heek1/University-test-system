@@ -96,64 +96,62 @@
         
         function updateTimer() {
             let now = new Date();
-            let diff = Math.floor((now - startTime) / 1000); // різниця в секундах
+            let diff = Math.floor((now - startTime) / 1000); 
             
             let minutes = Math.floor(diff / 60);
             let seconds = diff % 60;
             
-            // Форматуємо з ведучими нулями
+
             let display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('timer').textContent = display;
             
-            // Попередження, якщо залишилось мало часу (останні 2 хвилини)
+
             let limitMinutes = @Model.Time;
             if (limitMinutes - minutes <= 2 && limitMinutes - minutes >= 0) {
                 document.getElementById('timerCard').classList.add('timer-warning');
                 
-                // Додаємо мігаючий ефект в останню хвилину
+
                 if (limitMinutes - minutes <= 1) {
                     document.getElementById('timer').style.animation = 'blink 1s infinite';
                 }
             }
         }
         
-        // Запускаємо секундомір при завантаженні сторінки
+
         document.addEventListener('DOMContentLoaded', function() {
             startTime = new Date();
             updateTimer();
             timerInterval = setInterval(updateTimer, 1000);
         });
 
-        // Функція для вибору відповіді
+
         function selectAnswer(questionId, answerId, element) {
-            // Знаходимо радіо-кнопку
+   
             let radio = document.getElementById(`answer_${answerId}`);
             radio.checked = true;
             
-            // Видаляємо клас selected у всіх опцій цього питання
+  
             let parentBlock = element.closest('.question-block');
             parentBlock.querySelectorAll('.answer-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
             
-            // Додаємо клас selected до вибраної опції
+
             element.classList.add('selected');
         }
 
-        // Зупиняємо секундомір при відправці форми
+
         document.getElementById('testForm')?.addEventListener('submit', function() {
             clearInterval(timerInterval);
         });
-
-        // Попередження при спробі закрити сторінку
+        
         window.addEventListener('beforeunload', function (e) {
             if (!document.getElementById('testForm').hasAttribute('data-submitted')) {
                 e.preventDefault();
                 e.returnValue = 'Тест ще не завершено. Ви впевнені, що хочете вийти?';
             }
         });
-
-        // Позначаємо, що форма відправлена
+        
         document.getElementById('testForm')?.addEventListener('submit', function() {
             this.setAttribute('data-submitted', 'true');
         });
