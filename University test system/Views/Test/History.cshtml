@@ -1,41 +1,43 @@
 @model IEnumerable<University_test_system.Models.Attempt>
 
-@{
-    ViewData["Title"] = "Історія проходження тестів";
-}
-<div class="container text-center">
-    <h2 class="knu-page-header h1">@ViewData["Title"]</h2>
+<div class="knu-page-header">
+    <div class="container">
+        <h1><i class="bi bi-clock-history me-2"></i>Історія проходження тестів</h1>
+        <p>Ваші попередні спроби та результати тестів</p>
+    </div>
 </div>
 
 <div class="min-vh-50 d-flex align-items-center justify-content-center py-5">
-    <table class="knu-table thead th">
+    <table class="knu-table">
     <thead>
         <tr>
-            <th>Назва тесту</th>
-            <th>Предмет</th>
-            <th>Дата спроби</th>
-            <th>Номер спроби</th>
-            <th>Бали</th>
-            <th>Дії</th>
+            <th class="text-center">Назва тесту</th>
+            <th class="text-center">Предмет</th>
+            <th class="text-center">Дата спроби</th>
+            <th class="text-center">Номер спроби</th>
+            <th class="text-center">Бали</th>
+            <th class="text-center">Дії</th>
         </tr>
     </thead>
         <tbody class="knu-table tbody tr">
         @foreach (var attempt in Model)
         {
             <tr>
-                <td>@attempt.Test.Title</td>
-                <td>@attempt.Test.Subject?.Name</td>
-                <td>@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>@attempt.AttemptsCount</td>
-                <td>@attempt.Score</td>
-                <td>
-                    <a asp-action="Result" asp-route-id="@attempt.Id" class="btn btn-knu w-100">
+                <td class="text-center align-middle">@attempt.Test.Title</td>
+                <td class="text-center align-middle">@attempt.Test.Subject?.Name</td>
+                <td class="text-center align-middle">@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>
+                <td class="text-center align-middle">@attempt.AttemptsCount</td>
+                <td class="text-center align-middle">@attempt.Score</td>
+                <td class="text-center align-middle">
+                    <div class="d-flex flex-column gap-1">
+                        <a asp-action="Result" asp-route-id="@attempt.Id" class="btn btn-knu btn-sm">
                             Переглянути результат
-                    </a>
+                        </a>
 
-                    <a asp-action="Leaderboard" asp-route-id="@attempt.Id" class="btn btn-knu w-100">
+                        <a asp-action="Leaderboard" asp-route-testId="@attempt.TestId" class="btn btn-knu btn-sm">
                             Переглянути список лідерів
-                    </a>
+                        </a>
+                    </div>
                 </td>                    
             </tr>
         }

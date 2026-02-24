@@ -4,8 +4,11 @@
     ViewData["Title"] = "Лідерборд";
 }
 
-<div class="container text-center">
-    <h2 class="knu-page-header h1">@ViewData["Title"]</h2>
+<div class="knu-page-header">
+    <div class="container">
+        <h1><i class="bi bi-trophy me-2"></i>Лідерборд</h1>
+        <p>Топ учасників за результатами тестів</p>
+    </div>
 </div>
 
 <div class="min-vh-50 d-flex align-items-center justify-content-center py-5">
@@ -29,7 +32,7 @@
             {
                 <tr>
                     <td class="text-center align-middle">@rank</td>
-                    <td class="text-center align-middle">@attempt.User.UserName</td>
+                    <td class="text-center align-middle">@(attempt.User?.DisplayName ?? attempt.User?.UserName ?? "—")</td>
                     <td class="text-center align-middle">@attempt.Test.Title</td>
                     <td class="text-center align-middle">@attempt.Test.Subject?.Name</td>
                     <td class="text-center align-middle">@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>

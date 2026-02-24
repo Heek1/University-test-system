@@ -255,6 +255,16 @@ main {
         transform: translateY(-1px);
     }
 
+    .btn-trash{
+        margin-top: .5rem;
+        border: 2px solid var(--knu-crimson);
+        border-radius: 8px;
+        padding: .4rem 1.3rem;
+        transition: all .2s;
+    }
+    .btn-trash:hover {
+        background: var(--knu-crimson);
+    }
 /* ─── TABLES ─── */
 .knu-table {
     background: #fff;
@@ -633,6 +643,7 @@ main {
     transition: all 0.2s;
     box-shadow: var(--knu-shadow);
     margin-top: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .btn-submit-test:hover {

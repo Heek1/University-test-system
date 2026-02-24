@@ -245,6 +245,8 @@ public class TestController : Controller
         var leaderboard = await _context.Attempts
             .Include(a => a.User)
             .Include(a => a.Test)
+            .ThenInclude(t => t.Subject)
+            .Include(ut => ut.User)
             .Where(a => a.TestId == testId) // Фільтруємо за тестом
             .OrderByDescending(a => a.Score) // Сортуємо за балами
             .ThenBy(a => a.AttemptDate) // Якщо бали однакові, сортуємо за датою

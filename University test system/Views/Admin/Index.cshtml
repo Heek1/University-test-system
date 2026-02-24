@@ -31,113 +31,113 @@
         <div class="table-responsive">
             <table class="table mb-0" style="border-color: var(--knu-border);">
                 <thead style="background: var(--knu-warm-muted); color: var(--knu-text);">
-                    <tr>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">#</th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">Назва</th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">Предмет</th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">Рівень</th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">
-                            <i class="bi bi-clock me-1"></i>Час
-                        </th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">
-                            <i class="bi bi-question-circle me-1"></i>Питань
-                        </th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">
-                            <i class="bi bi-arrow-repeat me-1"></i>Спроб
-                        </th>
-                        <th class="px-4 py-3" style="border-color: var(--knu-border);">
-                            <i class="bi bi-building me-1"></i>Факультети
-                        </th>
-                        <th class="px-4 py-3 text-end" style="border-color: var(--knu-border);">Дії</th>
-                    </tr>
+                <tr>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">#</th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">Назва</th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">Предмет</th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">Рівень</th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">
+                        <i class="bi bi-clock me-1"></i>Час
+                    </th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">
+                        <i class="bi bi-question-circle me-1"></i>Питань
+                    </th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">
+                        <i class="bi bi-arrow-repeat me-1"></i>Спроб
+                    </th>
+                    <th class="px-4 py-3" style="border-color: var(--knu-border);">
+                        <i class="bi bi-building me-1"></i>Факультети
+                    </th>
+                    <th class="px-4 py-3 text-center" style="border-color: var(--knu-border);">Дії</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null && Model.Any())
+                @if (Model != null && Model.Any())
+                {
+                    var index = 1;
+                    foreach (var test in Model)
                     {
-                        var index = 1;
-                        foreach (var test in Model)
-                        {
-                            <tr style="border-color: var(--knu-border); transition: background .15s;"
-                                onmouseover="this.style.background='var(--knu-warm-muted)'"
-                                onmouseout="this.style.background=''">
-                                <td class="px-4 py-3 text-muted">@index</td>
-                                <td class="px-4 py-3 fw-semibold" style="color: var(--knu-text);">
-                                    @test.Title
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="badge" style="background: var(--knu-warm-muted); color: var(--knu-text-muted); border: 1px solid var(--knu-border);">
-                                        @(test.Subject?.Name ?? "—")
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if (!string.IsNullOrEmpty(test.Level))
+                        <tr style="border-color: var(--knu-border); transition: background .15s;"
+                            onmouseover="this.style.background='var(--knu-warm-muted)'"
+                            onmouseout="this.style.background=''">
+                            <td class="px-4 py-3 text-muted">@index</td>
+                            <td class="px-4 py-3 fw-semibold" style="color: var(--knu-text);">
+                                @test.Title
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="badge" style="background: var(--knu-warm-muted); color: var(--knu-text-muted); border: 1px solid var(--knu-border);">
+                                    @(test.Subject?.Name ?? "—")
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                @if (!string.IsNullOrEmpty(test.Level))
+                                {
+                                    var levelColor = test.Level switch
                                     {
-                                        var levelColor = test.Level switch
-                                        {
-                                            "Легкий" => "#198754",
-                                            "Середній" => "#D4A843",
-                                            "Складний" => "#C0122C",
-                                            _ => "#7A5C5C"
-                                        };
-                                        <span class="badge" style="background: @levelColor; color: white;">
-                                            @test.Level
+                                        "Легкий" => "#198754",
+                                        "Середній" => "#D4A843",
+                                        "Складний" => "#C0122C",
+                                        _ => "#7A5C5C"
+                                    };
+                                    <span class="badge" style="background: @levelColor; color: white;">
+                                        @test.Level
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td class="px-4 py-3">@test.Time хв</td>
+                            <td class="px-4 py-3">@(test.Questions?.Count ?? 0)</td>
+                            <td class="px-4 py-3">@test.MaxAttempts</td>
+                            <td class="px-4 py-3">
+                                @if (test.TestFaculties != null && test.TestFaculties.Any())
+                                {
+                                    foreach (var tf in test.TestFaculties)
+                                    {
+                                        <span class="badge me-1 mb-1" 
+                                              style="background: var(--knu-warm-muted); color: var(--knu-crimson); border: 1px solid var(--knu-border); font-size: .75em;">
+                                            @(tf.Faculty?.Name ?? $"#{tf.FacultyId}")
                                         </span>
                                     }
-                                    else
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                </td>
-                                <td class="px-4 py-3">@test.Time хв</td>
-                                <td class="px-4 py-3">@(test.Questions?.Count ?? 0)</td>
-                                <td class="px-4 py-3">@test.MaxAttempts</td>
-                                <td class="px-4 py-3">
-                                    @if (test.TestFaculties != null && test.TestFaculties.Any())
-                                    {
-                                        foreach (var tf in test.TestFaculties)
-                                        {
-                                            <span class="badge me-1 mb-1" 
-                                                  style="background: var(--knu-warm-muted); color: var(--knu-crimson); border: 1px solid var(--knu-border); font-size: .75em;">
-                                                @(tf.Faculty?.Name ?? $"#{tf.FacultyId}")
-                                            </span>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                </td>
-                                <td class="px-4 py-3 text-end">
-                                    <a asp-action="ManageQuestions" asp-controller="Admin" asp-route-id="@test.Id"
-                                       class="btn btn-sm btn-knu-outline me-1" title="Питання">
-                                        <i class="bi bi-list-check"></i>
-                                    </a>
-                                    <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id"
-                                       class="btn btn-sm btn-knu-outline me-1" title="Редагувати">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="DeleteTest" asp-controller="Admin" asp-route-id="@test.Id"
-                                          method="post" class="d-inline"
-                                          onsubmit="return confirm('Видалити цей тест?');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Видалити">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            index++;
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="9" class="text-center py-5" style="color: var(--knu-text-muted);">
-                                <i class="bi bi-journal-x display-6 d-block mb-3"></i>
-                                Тестів не знайдено
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                <a asp-action="ManageQuestions" asp-controller="Admin" asp-route-id="@test.Id"
+                                   class="btn btn-sm btn-knu-outline me-1" title="Питання">
+                                    <i class="bi bi-list-check"></i>
+                                </a>
+                                <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id"
+                                   class="btn btn-sm btn-knu-outline me-1" title="Редагувати">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="DeleteTest" asp-controller="Admin" asp-route-id="@test.Id"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('Видалити цей тест?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-trash btn-outline-danger me-1" title="Видалити">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
+                        index++;
                     }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5" style="color: var(--knu-text-muted);">
+                            <i class="bi bi-journal-x display-6 d-block mb-3"></i>
+                            Тестів не знайдено
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
