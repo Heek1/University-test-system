@@ -104,9 +104,17 @@
 
             let display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('timer').textContent = display;
-            
 
             let limitMinutes = @Model.Time;
+
+            // автоматичне припинення коли час вийшов
+            if (diff >= limitMinutes * 60) {
+                clearInterval(timerInterval);
+                document.getElementById('testForm').setAttribute('data-submitted', 'true');
+                document.getElementById('testForm').submit();
+                return;
+            }
+            
             if (limitMinutes - minutes <= 2 && limitMinutes - minutes >= 0) {
                 document.getElementById('timerCard').classList.add('timer-warning');
                 
