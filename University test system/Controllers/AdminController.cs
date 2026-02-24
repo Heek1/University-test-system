@@ -97,7 +97,9 @@ public class AdminController : Controller
     public async Task<IActionResult> EditTest(int id)
     {
         //Знаходимо тест за Id
-        var test = await _context.Tests.FindAsync(id);
+        var test = await _context.Tests
+            .Include(t => t.TestFaculties)
+            .FirstOrDefaultAsync(t => t.Id == id);
         if (test == null) return NotFound();
         //Створюємо модель для передачі даних у вигляд
         var model = new AddTestViewModel
@@ -105,7 +107,11 @@ public class AdminController : Controller
             Title = test.Title,
             SubjectId = test.SubjectId,
             Time = test.Time,
-            Subjects = await _context.Subjects.ToListAsync()
+            Level = test.Level,
+            MaxAttempts = test.MaxAttempts,
+            Subjects = await _context.Subjects.ToListAsync(),
+            Faculties = await _context.Faculties.ToListAsync(),
+            SelectedFacultyIds = test.TestFaculties.Select(tf => tf.FacultyId).ToList()
         };
         return View(model);
     }
@@ -114,18 +120,37 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditTest(int id, AddTestViewModel model)
     {
+        if (!model.SelectedFacultyIds.Any())
+        {
+            ModelState.AddModelError("SelectedFacultyIds", "Оберіть хоча б один факультет");
+        }
         if (!ModelState.IsValid)
         {
             model.Subjects = await _context.Subjects.ToListAsync();
             return View(model);
         }
         //Знаходимо тест за Id і оновлюємо дані
-        var test = await _context.Tests.FindAsync(id);
+        var test = await _context.Tests
+            .Include(t => t.TestFaculties)
+            .FirstOrDefaultAsync(t => t.Id == id);
         if (test == null) return NotFound();
 
         test.Title = model.Title;
         test.SubjectId = model.SubjectId;
         test.Time = model.Time;
+        test.Level = model.Level;
+        test.MaxAttempts = model.MaxAttempts;
+        
+        // Оновлюємо факультети — видаляємо старі, додаємо нові
+        _context.TestFaculties.RemoveRange(test.TestFaculties);
+        foreach (var facultyId in model.SelectedFacultyIds)
+        {
+            _context.TestFaculties.Add(new TestFaculty
+            {
+                TestId = test.Id,
+                FacultyId = facultyId
+            });
+        }
 
         await _context.SaveChangesAsync();
         TempData["Success"] = "Тест оновлено";

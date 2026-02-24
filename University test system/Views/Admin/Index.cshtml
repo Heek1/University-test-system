@@ -12,13 +12,13 @@
 </div>
 
 <div class="container mb-5">
-    @if (TempData["Success"] is string success)
+    @*@if (TempData["Success"] is string success) - потім переробити стилі для повідомлень
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>@success
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    }
+    }*@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="mb-0 text-muted">Всього тестів: @Model.Count()</h5>
@@ -96,7 +96,7 @@
                                 {
                                     foreach (var tf in test.TestFaculties)
                                     {
-                                        <span class="badge me-1 mb-1" 
+                                        <span class="badge me-1 mb-1"
                                               style="background: var(--knu-warm-muted); color: var(--knu-crimson); border: 1px solid var(--knu-border); font-size: .75em;">
                                             @(tf.Faculty?.Name ?? $"#{tf.FacultyId}")
                                         </span>
