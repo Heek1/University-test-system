@@ -4,33 +4,160 @@
     ViewData["Title"] = "Проходження тесту";
 }
 
-<h2>@Model.Title</h2>
-<p><strong>Рівень:</strong> @Model.Level</p>
-<p><strong>Предмет:</strong> @Model.Subject?.Name</p>
-<p><strong>Час на виконання:</strong> @Model.Time хв.</p>
+<div class="container mt-4">
+    <!-- Секундомір -->
+    <div class="timer-sticky">
+        <div class="timer-card" id="timerCard">
+            <div>
+                <div class="timer-label">
+                    <i class="bi bi-hourglass-split me-1"></i>Час виконання
+                </div>
+                <div class="timer-display" id="timer">00:00</div>
+            </div>
+            <div class="text-end">
+                <div class="timer-label">
+                    <i class="bi bi-clock me-1"></i>Ліміт часу
+                </div>
+                <div class="fw-bold" style="font-size: 1.3rem;">@Model.Time хв</div>
+            </div>
+        </div>
+    </div>
 
-<form asp-action="Take" method="post">
-    <input type="hidden" name="TestId" value="@Model.Id" />
+    <!-- Заголовок тесту -->
+    <div class="test-header">
+        <h2>@Model.Title</h2>
+        <div class="test-meta">
+            <span><i class="bi bi-tag"></i> @Model.Subject?.Name</span>
+            <span>
+                <i class="bi bi-bar-chart"></i> 
+                @Model.Level
+            </span>
+            <span>
+                <i class="bi bi-question-circle"></i> 
+                @(Model.Questions?.Count ?? 0) питань
+            </span>
+        </div>
+    </div>
 
-    @for (int i = 0; Model.Questions != null && i < Model.Questions.Count; i++)
-    {
-        var question = Model.Questions[i];
-        <div class="question-block">
-            <h4>Питання @(i + 1): @question.Title</h4>
+    <!-- Форма тесту -->
+    <form asp-action="Take" method="post" id="testForm">
+        <input type="hidden" name="TestId" value="@Model.Id" />
 
-            @for (int j = 0; j < question.Answers.Count; j++)
+        @if (Model.Questions != null && Model.Questions.Any())
+        {
+            @for (int i = 0; i < Model.Questions.Count; i++)
             {
-                var answer = question.Answers[j];
-                <div>
-                    <input type="radio"
-                           name="QuestionAnswers[@question.Id]"
-                           value="@answer.Id"
-                           id="answer_@answer.Id" />
-                    <label for="answer_@answer.Id">@answer.Text</label>
+                var question = Model.Questions[i];
+                <div class="question-block">
+                    <div class="question-title">
+                        Питання @(i + 1): @question.Title
+                    </div>
+
+                    <div class="answers-container">
+                        @for (int j = 0; j < question.Answers.Count; j++)
+                        {
+                            var answer = question.Answers[j];
+                            var letter = ((char)('А' + j)).ToString(); // А, Б, В, Г
+                            
+                            <div class="answer-option" onclick="selectAnswer(@question.Id, @answer.Id, this)">
+                                <input type="radio"
+                                       name="QuestionAnswers[@question.Id]"
+                                       value="@answer.Id"
+                                       id="answer_@answer.Id"
+                                       style="display: none;" />
+                                <span class="answer-marker">@letter</span>
+                                <span class="answer-text">@answer.Text</span>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
-        </div>
-    }
+            
+            <button type="submit" class="btn-submit-test" id="submitBtn">
+                <i class="bi bi-check-circle me-2"></i>Завершити тест
+            </button>
+        }
+        else
+        {
+            <div class="knu-card p-5 text-center">
+                <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: var(--knu-crimson);"></i>
+                <h4 class="mt-3">У цьому тесті немає питань</h4>
+                <p class="text-muted">Будь ласка, зверніться до адміністратора</p>
+            </div>
+        }
+    </form>
+</div>
 
-    <button type="submit" class="btn btn-knu w-100">Завершити тест</button>
-</form>
+@section Scripts {
+    <script>
+
+        let startTime = new Date();
+        let timerInterval;
+        
+        function updateTimer() {
+            let now = new Date();
+            let diff = Math.floor((now - startTime) / 1000); // різниця в секундах
+            
+            let minutes = Math.floor(diff / 60);
+            let seconds = diff % 60;
+            
+            // Форматуємо з ведучими нулями
+            let display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = display;
+            
+            // Попередження, якщо залишилось мало часу (останні 2 хвилини)
+            let limitMinutes = @Model.Time;
+            if (limitMinutes - minutes <= 2 && limitMinutes - minutes >= 0) {
+                document.getElementById('timerCard').classList.add('timer-warning');
+                
+                // Додаємо мігаючий ефект в останню хвилину
+                if (limitMinutes - minutes <= 1) {
+                    document.getElementById('timer').style.animation = 'blink 1s infinite';
+                }
+            }
+        }
+        
+        // Запускаємо секундомір при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', function() {
+            startTime = new Date();
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        });
+
+        // Функція для вибору відповіді
+        function selectAnswer(questionId, answerId, element) {
+            // Знаходимо радіо-кнопку
+            let radio = document.getElementById(`answer_${answerId}`);
+            radio.checked = true;
+            
+            // Видаляємо клас selected у всіх опцій цього питання
+            let parentBlock = element.closest('.question-block');
+            parentBlock.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Додаємо клас selected до вибраної опції
+            element.classList.add('selected');
+        }
+
+        // Зупиняємо секундомір при відправці форми
+        document.getElementById('testForm')?.addEventListener('submit', function() {
+            clearInterval(timerInterval);
+        });
+
+        // Попередження при спробі закрити сторінку
+        window.addEventListener('beforeunload', function (e) {
+            if (!document.getElementById('testForm').hasAttribute('data-submitted')) {
+                e.preventDefault();
+                e.returnValue = 'Тест ще не завершено. Ви впевнені, що хочете вийти?';
+            }
+        });
+
+        // Позначаємо, що форма відправлена
+        document.getElementById('testForm')?.addEventListener('submit', function() {
+            this.setAttribute('data-submitted', 'true');
+        });
+
+
+    </script>
+}
