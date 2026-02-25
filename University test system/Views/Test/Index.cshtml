@@ -19,20 +19,26 @@
         </div>
     }
 
+    <div class="mb-4">
+        <input type="text" id="subjectSearch" class="form-control form-control-lg"
+               placeholder="Пошук тесту "
+               style="border-color: var(--knu-border); border-radius: 10px;">
+    </div>
+
     @{
         var testsBySubject = Model
-            .GroupBy(t => t.Subject)
-            .OrderBy(g => g.Key?.Name)
-            .ToList();
+        .GroupBy(t => t.Subject)
+        .OrderBy(g => g.Key?.Name)
+        .ToList();
     }
 
     @foreach (var subjectGroup in testsBySubject)
     {
-        <div class="mb-5">
+        <div class="mb-5" data-subject="@(subjectGroup.Key?.Name ?? "")">
             <h3 class="section-title mb-4">
                 <i class="bi bi-book me-2"></i>@(subjectGroup.Key?.Name ?? "Інший предмет")
             </h3>
-            
+
             <div class="row g-4">
                 @foreach (var test in subjectGroup)
                 {
@@ -40,7 +46,7 @@
                         <div class="knu-card h-100">
                             <div class="card-body p-4">
                                 <h5 class="card-title mb-3">@test.Title</h5>
-                                
+
                                 <div class="mb-4">
                                     <div class="d-flex align-items-center text-muted small mb-2">
                                         <i class="bi bi-clock me-2"></i>
@@ -69,17 +75,17 @@
                                 </div>
 
                                 @if (left > 0)
-{
-    <a asp-action="Take" asp-route-id="@test.Id" class="btn btn-knu w-100">
-        <i class="bi bi-play-circle me-2"></i>Розпочати тест
-    </a>
-}
-else
-{
-    <button class="btn btn-secondary w-100" disabled>
-        <i class="bi bi-x-circle me-2"></i>Спроби вичерпано
-    </button>
-}
+                                {
+                                    <a asp-action="Take" asp-route-id="@test.Id" class="btn btn-knu w-100">
+                                        <i class="bi bi-play-circle me-2"></i>Розпочати тест
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary w-100" disabled>
+                                        <i class="bi bi-x-circle me-2"></i>Спроби вичерпано
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -87,7 +93,7 @@ else
             </div>
         </div>
     }
-    
+
     @if (!Model.Any())
     {
         <div class="text-center py-5">
@@ -96,7 +102,7 @@ else
             </div>
             <h4>Немає доступних тестів</h4>
             <p class="text-muted">На даний момент немає тестів для проходження</p>
-            
+
             @if (User.IsInRole("Admin"))
             {
                 <a href="/Admin/CreateTest" class="btn btn-knu mt-3">
@@ -106,3 +112,29 @@ else
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        const searchInput = document.getElementById('subjectSearch');
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('.mb-5[data-subject]').forEach(function (section) {
+                const subjectName = section.getAttribute('data-subject').toLowerCase();
+                const cards = section.querySelectorAll('.knu-card');
+                let visibleCards = 0;
+
+                cards.forEach(function (card) {
+                    const title = card.querySelector('.card-title')?.textContent.toLowerCase() ?? '';
+                    if (title.includes(query) || subjectName.includes(query)) {
+                        card.closest('.col-lg-4').style.display = '';
+                        visibleCards++;
+                    } else {
+                        card.closest('.col-lg-4').style.display = 'none';
+                    }
+                });
+
+                section.style.display = visibleCards === 0 && query !== '' ? 'none' : '';
+            });
+        });
+    </script>
+}
