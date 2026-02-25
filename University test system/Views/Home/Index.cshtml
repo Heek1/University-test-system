@@ -116,9 +116,10 @@
     @if (!User.Identity?.IsAuthenticated ?? true)
     {
         <div class="text-center py-4">
-            <h5 class="section-title mb-4">Готові перевірити свої знання?</h5>
+            <h5 class="section-title section-title-no-underline mb-4">Готові перевірити свої знання?</h5>
             <a href="/Account/Login" class="btn btn-knu px-5 py-3 fs-5">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Увійти та почати</a>
+                <i class="bi bi-box-arrow-in-right me-2"></i>Увійти та почати
+            </a>
         </div>
     }
 </div>
