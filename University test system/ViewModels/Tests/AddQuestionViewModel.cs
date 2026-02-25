@@ -16,4 +16,6 @@ public class AddQuestionViewModel
         new AnswerViewModel(),
         new AnswerViewModel()
     };
+    
+    public int? CorrectAnswerIndex { get; set; }
 }

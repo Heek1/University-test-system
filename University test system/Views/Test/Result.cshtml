@@ -103,9 +103,27 @@
                     <hr class="divider-knu my-4" />
 
                     @* Результат *@
-                    <div class="text-center py-4">
-                        <div class="display-1 fw-bold text-knu">@Model.Score / @Model.Test.Questions.Count</div>
-                        <span class="text-muted">набраних балів</span>
+                    @{
+                        var percent = (100.0 * Model.Score) / Model.Test.Questions.Count;
+                        var grade = Math.Round((12.0 * Model.Score) / Model.Test.Questions.Count);
+                    }
+
+                    <div class="text-center my-5">
+
+                        <div class="circle"
+                             style="background: conic-gradient(#dc3545 @percent%, #e9ecef 0%);">
+
+                            <div class="circle-inner">
+                                <div class="display-4 fw-bold">@grade</div>
+                                <small class="text-muted">з 12</small>
+                            </div>
+
+                        </div>
+
+                        <div class="mt-4 fs-5">
+                            @Model.Score з @Model.Test.Questions.Count правильних відповідей
+                        </div>
+
                     </div>
 
                 </div>

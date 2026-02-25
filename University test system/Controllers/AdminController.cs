@@ -216,25 +216,13 @@ public class AdminController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage);
-            TempData["Error"] = string.Join(", ", errors);
+            TempData["Error"] = "Перевірте правильність введених даних";
             return View(model);
         }
     
-        // Перевірка на кількість правильних відповідей
-        var correctAnswersCount = model.Answers.Count(a => a.IsTrue);
-    
-        if (correctAnswersCount == 0)
+        if (model.CorrectAnswerIndex == null)
         {
-            TempData["Error"] = "Питання повинно мати хоча б одну правильну відповідь";
-            return View(model);
-        }
-    
-        if (correctAnswersCount > 1)
-        {
-            TempData["Error"] = "Питання може мати тільки ОДНУ правильну відповідь. Будь ласка, позначте тільки одну відповідь як правильну.";
+            TempData["Error"] = "Оберіть правильну відповідь";
             return View(model);
         }
 
@@ -242,10 +230,10 @@ public class AdminController : Controller
         {
             Title = model.Title,
             TestId = model.TestId,
-            Answers = model.Answers.Select(a => new Answer
+            Answers = model.Answers.Select((a, index) => new Answer
             {
                 Text = a.Text,
-                IsTrue = a.IsTrue
+                IsTrue = index == model.CorrectAnswerIndex
             }).ToList()
         };
 
