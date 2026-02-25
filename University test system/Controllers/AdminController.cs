@@ -222,10 +222,19 @@ public class AdminController : Controller
             TempData["Error"] = string.Join(", ", errors);
             return View(model);
         }
-        
-        if (!model.Answers.Any(a => a.IsTrue))
+    
+        // Перевірка на кількість правильних відповідей
+        var correctAnswersCount = model.Answers.Count(a => a.IsTrue);
+    
+        if (correctAnswersCount == 0)
         {
             TempData["Error"] = "Питання повинно мати хоча б одну правильну відповідь";
+            return View(model);
+        }
+    
+        if (correctAnswersCount > 1)
+        {
+            TempData["Error"] = "Питання може мати тільки ОДНУ правильну відповідь. Будь ласка, позначте тільки одну відповідь як правильну.";
             return View(model);
         }
 
