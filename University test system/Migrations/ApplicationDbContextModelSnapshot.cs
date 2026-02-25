@@ -177,7 +177,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("University_test_system.Models.Attempt", b =>
@@ -213,7 +213,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Attempts");
+                    b.ToTable("Attempts", (string)null);
                 });
 
             modelBuilder.Entity("University_test_system.Models.Faculty", b =>
@@ -230,7 +230,7 @@ namespace University_test_system.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Faculties");
+                    b.ToTable("Faculties", (string)null);
 
                     b.HasData(
                         new
@@ -279,7 +279,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("TestId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("University_test_system.Models.Subject", b =>
@@ -304,7 +304,7 @@ namespace University_test_system.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
 
                     b.HasData(
                         new
@@ -387,7 +387,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Tests");
+                    b.ToTable("Tests", (string)null);
                 });
 
             modelBuilder.Entity("University_test_system.Models.TestFaculty", b =>
@@ -402,7 +402,7 @@ namespace University_test_system.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("TestFaculties");
+                    b.ToTable("TestFaculties", (string)null);
                 });
 
             modelBuilder.Entity("University_test_system.Models.User", b =>
