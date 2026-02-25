@@ -108,11 +108,15 @@
                                 }
                             </td>
                             <td class="px-4 py-3 text-center">
+                                <a asp-action="TestResults" asp-controller="Admin" asp-route-id="@test.Id"
+                                   class="btn btn-sm btn-knu-outline me-1" title="Результати">
+                                    <i class="bi bi-bar-chart"></i>
+                                </a>
                                 <a asp-action="ManageQuestions" asp-controller="Admin" asp-route-id="@test.Id"
                                    class="btn btn-sm btn-knu-outline me-1" title="Питання">
                                     <i class="bi bi-list-check"></i>
                                 </a>
-                                <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id"
+                                <a asp-action="EditTest" asp-controller="Admin" asp-route-id="@test.Id" style="margin-top: .5rem;"
                                    class="btn btn-sm btn-knu-outline me-1" title="Редагувати">
                                     <i class="bi bi-pencil"></i>
                                 </a>

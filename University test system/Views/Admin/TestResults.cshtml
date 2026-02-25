@@ -1,0 +1,141 @@
+﻿@{
+    var test = (Test)ViewBag.Test;
+    var attempts = (List<Attempt>)ViewBag.Attempts;
+    ViewData["Title"] = "Результати тесту";
+}
+
+<div class="knu-page-header">
+    <div class="container">
+            
+            <h1><i class="bi bi-bar-chart me-2"></i>Результати тесту</h1>
+            <p>@test.Title · @test.Subject?.Name</p>
+        </div>
+</div>
+
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Index" asp-controller="Admin" class="btn btn-knu-outline">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+        @if (attempts != null && attempts.Any())
+        {
+            <h5 class="text-muted mb-0">
+                <i class="bi bi-people me-2"></i>Всього студентів: @attempts.GroupBy(a => a.UserId).Count()
+            </h5>
+        }
+    </div>
+    @if (attempts != null && attempts.Any())
+    {
+        <div class="mb-4">
+            <h5 class="text-muted mb-0">
+                <i class="bi bi-people me-2"></i>Всього студентів: @attempts.GroupBy(a => a.UserId).Count()
+            </h5>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var attempt in attempts)
+            {
+                var percent = (100.0 * attempt.Score) / test.Questions.Count;
+                var grade = Math.Round((12.0 * attempt.Score) / test.Questions.Count);
+
+                <div class="col-md-6 col-xl-4">
+                    <div class="knu-card h-100">
+                        <div class="card-body p-4">
+
+                            @* Інформація про студента *@
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <i class="bi bi-person-circle fs-3 text-knu"></i>
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold">
+                                            @(attempt.User?.DisplayName ?? attempt.User?.UserName ?? "—")
+                                        </h6>
+                                        <small class="text-muted">@(attempt.User?.Email ?? "—")</small>
+                                    </div>
+                                </div>
+
+                                @if (attempt.User?.Faculty != null)
+                                {
+                                    <span class="badge mt-2"
+                                          style="background: var(--knu-warm-muted); color: var(--knu-crimson); border: 1px solid var(--knu-border);">
+                                        <i class="bi bi-building me-1"></i>@attempt.User.Faculty.Name
+                                    </span>
+                                }
+                            </div>
+
+                            <hr class="divider-knu my-3"/>
+
+                            @* Результат з круговою діаграмою *@
+                            <div class="text-center mb-3">
+                                <div class="circle mx-auto mb-3"
+                                     style="background: conic-gradient(#dc3545 @percent%, #e9ecef 0%); width: 120px; height: 120px;">
+                                    <div class="circle-inner">
+                                        <div class="display-6 fw-bold">@grade</div>
+                                        <small class="text-muted">з 12</small>
+                                    </div>
+                                </div>
+                                <div class="fw-semibold" style="color: var(--knu-text);">
+                                    @attempt.Score / @test.Questions.Count
+                                </div>
+                                <small class="text-muted">правильних відповідей</small>
+                            </div>
+
+                            <hr class="divider-knu my-3"/>
+
+                            @* Деталі спроби *@
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="bg-light p-2 rounded-3">
+                                        <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;">
+                                            <i class="bi bi-hourglass-split me-1"></i>Час
+                                        </small>
+                                        <span class="fw-semibold small">
+                                            @if (attempt.TimeSpentSeconds.HasValue)
+                                            {
+                                                var ts = TimeSpan.FromSeconds(attempt.TimeSpentSeconds.Value);
+                                                @($"{ts.Minutes}:{ts.Seconds:D2}")
+                                            }
+                                            else
+                                            {
+                                                @("—")
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-light p-2 rounded-3">
+                                        <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;">
+                                            <i class="bi bi-arrow-repeat me-1"></i>Спроба
+                                        </small>
+                                        <span class="fw-semibold small">@attempt.AttemptsCount / @test.MaxAttempts</span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="bg-light p-2 rounded-3">
+                                        <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;">
+                                            <i class="bi bi-calendar3 me-1"></i>Дата
+                                        </small>
+                                        <span class="fw-semibold small">@attempt.AttemptDate.ToString("dd.MM.yyyy HH:mm")</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="knu-card text-center py-5">
+                    <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
+                    <h5 class="text-muted">Ще ніхто не проходив цей тест</h5>
+                    <p class="text-muted mb-0">Результати з'являться тут після першої спроби студентів</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

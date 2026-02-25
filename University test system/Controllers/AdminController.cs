@@ -254,4 +254,30 @@ public class AdminController : Controller
         TempData["Success"] = "Питання видалено";
         return RedirectToAction("ManageQuestions", new { id = testId });
     }
+    
+    // У AdminController
+    public async Task<IActionResult> TestResults(int id)
+    {
+        var test = await _context.Tests
+            .Include(t => t.Subject)
+            .Include(t => t.Questions)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (test == null) return NotFound();
+
+        // Окремо завантажуємо спроби (як у TestController.Leaderboard)
+        var attempts = await _context.Attempts
+            .Include(a => a.User)
+            .ThenInclude(u => u.Faculty)
+            .Where(a => a.TestId == id)
+            .OrderByDescending(a => a.Score) // Сортуємо за балами
+            .ThenBy(a => a.AttemptDate) // Потім за датою
+            .ToListAsync();
+
+        // Передаємо через ViewBag (як у TestController.Index)
+        ViewBag.Attempts = attempts;
+        ViewBag.Test = test;
+    
+        return View();
+    }
 }
