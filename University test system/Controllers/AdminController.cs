@@ -255,7 +255,6 @@ public class AdminController : Controller
         return RedirectToAction("ManageQuestions", new { id = testId });
     }
     
-    // У AdminController
     public async Task<IActionResult> TestResults(int id)
     {
         var test = await _context.Tests
@@ -265,16 +264,14 @@ public class AdminController : Controller
 
         if (test == null) return NotFound();
 
-        // Окремо завантажуємо спроби (як у TestController.Leaderboard)
         var attempts = await _context.Attempts
             .Include(a => a.User)
             .ThenInclude(u => u.Faculty)
             .Where(a => a.TestId == id)
-            .OrderByDescending(a => a.Score) // Сортуємо за балами
-            .ThenBy(a => a.AttemptDate) // Потім за датою
+            .OrderByDescending(a => a.Score)
+            .ThenBy(a => a.AttemptDate)
             .ToListAsync();
 
-        // Передаємо через ViewBag (як у TestController.Index)
         ViewBag.Attempts = attempts;
         ViewBag.Test = test;
     
