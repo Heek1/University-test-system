@@ -74,6 +74,33 @@
                         </a>
                     </li>
                 }
+
+                    @* Для супер адміна *@
+                    @if (User.IsInRole("SuperAdmin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/CreateAdmin">
+                                <i class="bi bi-person-plus"></i>Додати адміністратора
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/Register">
+                                <i class="bi bi-person-plus"></i>Додати користувача
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                               href="/Admin/Index">
+                                <i class="bi bi-speedometer2"></i>Панель адміна
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "ViewAllUsers" ? "active" : "")"
+                               href="/Admin/ViewAllUsers">
+                                <i class="bi bi-people-fill"></i>Користувачі
+                            </a>
+                        </li>
+                    } 
             </ul>
 
             <div class="d-flex align-items-center gap-2">

@@ -57,6 +57,7 @@ public class AccountController : Controller
         return View(model);
     }
     
+    // Сторінка реєстрації користувача
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Register()
     {
@@ -67,6 +68,7 @@ public class AccountController : Controller
         return View(model);
     }
 
+    // Обробка даних з форми регістрації користувача
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
@@ -92,26 +94,24 @@ public class AccountController : Controller
         return View(model);
     }
 
+    // Сторінка створення нового адміністратора
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> CreateAdmin()
+    {
+        var model = new RegisterViewModel
+        {
+            Faculties = await _context.Faculties.ToListAsync()
+        };
+        return View(model);
+    }
+
+    // Обробка даних з форми створення нового адміністратора
     [Authorize(Roles = Roles.SuperAdmin)]
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateAdmin(RegisterViewModel model)
+    public async Task<IActionResult> CreateAdmin(string email, string password)
     {
-        if (!ModelState.IsValid)
-        {
-            model.Faculties = await _context.Faculties.ToListAsync();
-            return View(model);
-        }
-
-        var user = new User
-        {
-            Email = model.Email,
-            DisplayName = model.DisplayName,
-            EmailConfirmed = true,            
-            FacultyId = model.FacultyId
-        };
-
-        var result = await _authService.RegisterAsync(model);
+        var user = new User { UserName = email, Email = email, EmailConfirmed = true };
+        var result = await _userManager.CreateAsync(user, password);
 
         if (result.Succeeded)
         {
@@ -123,28 +123,8 @@ public class AccountController : Controller
         foreach (var error in result.Errors)
             ModelState.AddModelError(string.Empty, error.Description);
 
-        return View(model);
+        return View();
     }
-
-    //[Authorize(Roles = Roles.SuperAdmin)]
-    //[HttpPost]
-    //public async Task<IActionResult> CreateAdmin(string email, string password)
-    //{
-    //    var user = new User { UserName = email, Email = email, EmailConfirmed = true };
-    //    var result = await _userManager.CreateAsync(user, password);
-
-    //    if (result.Succeeded)
-    //    {
-    //        await _userManager.AddToRoleAsync(user, Roles.Admin);
-    //        TempData["Success"] = "Адміна створено";
-    //        return RedirectToAction("ViewAllUsers", "Admin");
-    //    }
-
-    //    foreach (var error in result.Errors)
-    //        ModelState.AddModelError(string.Empty, error.Description);
-
-    //    return View();
-    //}
 
     // Обробка виходу користувача
     [HttpPost]
